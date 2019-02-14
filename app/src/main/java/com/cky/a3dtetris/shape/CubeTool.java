@@ -5,10 +5,10 @@ import android.util.Log;
 import java.util.Arrays;
 
 /**
- * Used to get coordinate of each shapes using Cube.
+ * Used to get coordinate of each shapes using CubeTool.
  */
 
-public class Cube {
+public class CubeTool {
 
     public static float[] combineCube(float[]... positions) {
         int length = 0;
@@ -91,15 +91,15 @@ public class Cube {
         };
     }
 
-    public static float[] getTextruePosition() {
-        return textruePosition;
+    public static float[] getTexturePosition() {
+        return texturePosition;
     }
 
     public static float[] getNormalPosition() {
         return normalPosition;
     }
 
-    private static float[] textruePosition = new float[]{
+    private static float[] texturePosition = new float[]{
             // Front face
             0.0f, 0.0f,
             0.0f, 1.0f,

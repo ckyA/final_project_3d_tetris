@@ -387,15 +387,15 @@ public class EGLActivity extends AppCompatActivity {
             vPosition = GLES20.glGetAttribLocation(program, "vPosition");
 
             vNormalPosition = GLES20.glGetAttribLocation(program, "vNormalPosition");
+            aTextureCoordinatesLocation = GLES20.glGetAttribLocation(program, "a_TextureCoordinates");
             uLightPosition = GLES20.glGetUniformLocation(program, "LightPosition");
             Kd = GLES20.glGetUniformLocation(program, "Kd");
             Ld = GLES20.glGetUniformLocation(program, "Ld");
             ModelViewMatrix = GLES20.glGetUniformLocation(program, "ModelViewMatrix");
             NormalMatrix = GLES20.glGetUniformLocation(program, "NormalMatrix");
+            uTextureUnitLocation = GLES20.glGetUniformLocation(program, "u_TextureUnit");
 
             uColor = GLES20.glGetUniformLocation(program, "uColor");
-            uTextureUnitLocation = GLES20.glGetUniformLocation(program, "u_TextureUnit");
-            aTextureCoordinatesLocation = GLES20.glGetAttribLocation(program, "a_TextureCoordinates");
 
             // 设置clear color颜色RGBA(这里仅仅是设置清屏时GLES20.glClear()用的颜色值而不是执行清屏)
             GLES20.glClearColor(1.0f, 1, 0.5f, 1.0f);
