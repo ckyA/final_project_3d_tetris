@@ -66,7 +66,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             + "uniform sampler2D u_TextureUnit;\n"
             + "varying vec2 v_TextureCoordinates;"
             + "void main(){                     \n"
-            + "   gl_FragColor = vec4(LightIntensity, 1.0) *texture2D(u_TextureUnit, v_TextureCoordinates) + vec4(0.3, 0.3, 0.3, 1.0) * texture2D(u_TextureUnit, v_TextureCoordinates);        \n"
+            + "   gl_FragColor = vec4(LightIntensity, 1.0) *texture2D(u_TextureUnit, v_TextureCoordinates)* uColor + vec4(0.3, 0.3, 0.3, 1.0) * texture2D(u_TextureUnit, v_TextureCoordinates);        \n"
             + "}";
 
     private Context context;
@@ -99,6 +99,9 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         NormalMatrix = GLES20.glGetUniformLocation(program, "NormalMatrix");
         uTextureUnitLocation = GLES20.glGetUniformLocation(program, "u_TextureUnit");
 
+        int uColor = GLES20.glGetUniformLocation(program, "uColor");
+        GLES20.glUniform4f(uColor, 0.3f, 0.7f, 1f, 1.0f);
+
         // Light
         GLES20.glUniform3f(Kd, 1.0f, 1.0f, 1.0f);
         GLES20.glUniform3f(Ld, 1.0f, 1.0f, 1.0f);
@@ -109,7 +112,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glEnableVertexAttribArray(vNormalPosition);
 
         // texture
-        texture = loadTexture(context, R.drawable.winter_outfits);
+        texture = loadTexture(context, R.drawable.basic_square);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
         GLES20.glUniform1i(uTextureUnitLocation, 0);
