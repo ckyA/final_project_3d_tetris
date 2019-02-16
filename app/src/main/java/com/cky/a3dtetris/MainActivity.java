@@ -15,5 +15,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void start(View view) {
         startActivity(new Intent(this, TetrisActivity.class));
+        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+    }
+
+    public void rank(View view) {
+        // todo
+    }
+
+    public void settings(View view) {
+        // todo
     }
 }

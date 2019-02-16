@@ -84,7 +84,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         program = createProgram(verticesShader, fragmentShader);
         GLES20.glUseProgram(program);
 
-        GLES20.glClearColor(1.0f, 1, 0.5f, 1.0f);
+        GLES20.glClearColor(0, 0, 0, 0);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glEnable(GLES20.GL_CULL_FACE);
 
