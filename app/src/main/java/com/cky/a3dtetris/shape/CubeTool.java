@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class CubeTool {
 
-    public static float[] combineCube(float[]... positions) {
+    public static float[] combineArrays(float[]... positions) {
         int length = 0;
         for (float[] position : positions) {
             length += position.length;
@@ -30,7 +30,6 @@ public class CubeTool {
                 }
             }
         }
-        Log.d("res", Arrays.toString(res));
         return res;
     }
 

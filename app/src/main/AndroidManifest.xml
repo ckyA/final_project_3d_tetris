@@ -20,10 +20,6 @@
         </activity>
 
         <activity
-            android:name=".EGLActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".TetrisActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"/>

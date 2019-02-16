@@ -8,6 +8,8 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 
+import com.cky.a3dtetris.shape.BlockA;
+import com.cky.a3dtetris.shape.BlockB;
 import com.cky.a3dtetris.shape.CubeTool;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -34,7 +36,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private int uTextureUnitLocation;
     private int aTextureCoordinatesLocation;
     private int uMatrixLocation;
-
+    private int uColor;
 
     // 顶点着色器的脚本
     private static final String verticesShader
@@ -98,34 +100,39 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         ModelViewMatrix = GLES20.glGetUniformLocation(program, "ModelViewMatrix");
         NormalMatrix = GLES20.glGetUniformLocation(program, "NormalMatrix");
         uTextureUnitLocation = GLES20.glGetUniformLocation(program, "u_TextureUnit");
-
-        int uColor = GLES20.glGetUniformLocation(program, "uColor");
-        GLES20.glUniform4f(uColor, 0.3f, 0.7f, 1f, 1.0f);
+        uColor = GLES20.glGetUniformLocation(program, "uColor");
 
         // Light
         GLES20.glUniform3f(Kd, 1.0f, 1.0f, 1.0f);
         GLES20.glUniform3f(Ld, 1.0f, 1.0f, 1.0f);
-        GLES20.glUniform4f(uLightPosition, 0.3f, 0.7f, 1f, 1.0f);
+        GLES20.glUniform4f(uLightPosition, -0.3f, -0.7f, 1f, 1.0f);
 
-        // set normal line
-        GLES20.glVertexAttribPointer(vNormalPosition, 3, GLES20.GL_FLOAT, false, 0, Utils.getFBVertices(CubeTool.getNormalPosition()));
-        GLES20.glEnableVertexAttribArray(vNormalPosition);
-
+//        GLES20.glUniform4f(uColor, 1f, 0f, 0f, 1.0f);
+//
+//        // set normal line
+//        GLES20.glVertexAttribPointer(vNormalPosition, 3, GLES20.GL_FLOAT, false, 0, Utils.getFBVertices(CubeTool.getNormalPosition()));
+//        GLES20.glEnableVertexAttribArray(vNormalPosition);
+//
         // texture
         texture = loadTexture(context, R.drawable.basic_square);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
         GLES20.glUniform1i(uTextureUnitLocation, 0);
-        GLES20.glVertexAttribPointer(aTextureCoordinatesLocation, 2, GLES20.GL_FLOAT, false, 0,
-                Utils.getFBVertices(CubeTool.getTexturePosition()));
-        GLES20.glEnableVertexAttribArray(aTextureCoordinatesLocation);
-
-        // set shapes` location
-        GLES20.glVertexAttribPointer(vPosition, 3, GLES20.GL_FLOAT, false, 0,
-                Utils.getFBVertices(CubeTool.getCubePosition(0.2f, 0, 0,0)));
-        GLES20.glEnableVertexAttribArray(vPosition);
-
+//        GLES20.glVertexAttribPointer(aTextureCoordinatesLocation, 2, GLES20.GL_FLOAT, false, 0,
+//                Utils.getFBVertices(CubeTool.getTexturePosition()));
+//        GLES20.glEnableVertexAttribArray(aTextureCoordinatesLocation);
+//
+//        // set shapes` location
+//        GLES20.glVertexAttribPointer(vPosition, 3, GLES20.GL_FLOAT, false, 0,
+//                Utils.getFBVertices(CubeTool.getCubePosition(0.2f, 0, 0,0)));
+//        GLES20.glEnableVertexAttribArray(vPosition);
+        blockA = new BlockA(NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
+        blockB = new BlockB(NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
+        blockB.height = 2;
     }
+
+    private BlockA blockA;
+    private BlockB blockB;
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -143,11 +150,14 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-        demoDraw();
+        blockA.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
+        blockA.draw();
+        blockB.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
+        blockB.draw();
     }
 
+    @Deprecated
     private void demoDraw() {
-
         float[] MVPM = new float[16];
         float[] MM = new float[16];
         float[] VM = new float[16];
