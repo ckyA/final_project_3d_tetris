@@ -134,6 +134,10 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private BlockA blockA;
     private BlockB blockB;
 
+    public BlockB getBlockB() { // todo used to test
+        return blockB;
+    }
+
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
@@ -150,8 +154,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-        blockA.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
-        blockA.draw();
+
         blockB.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
         blockB.draw();
     }
@@ -245,5 +248,13 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         bitmap.recycle();
         //返回OpenGL生成的纹理对象ID
         return textureObjectIds[0];
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+
+    public int getScreenWidth() {
+        return screenWidth;
     }
 }

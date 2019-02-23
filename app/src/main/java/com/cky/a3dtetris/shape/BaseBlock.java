@@ -3,7 +3,6 @@ package com.cky.a3dtetris.shape;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-import com.cky.a3dtetris.R;
 import com.cky.a3dtetris.Utils;
 
 public abstract class BaseBlock {
@@ -23,15 +22,20 @@ public abstract class BaseBlock {
     private int uMatrixLocation;
     private float[] projectionMatrix;
     private int blockCount;
+    private CenterPoint centerPoint;
 
-    public BaseBlock(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
+    private float rotateX;
+    private float rotateY;
+
+    public BaseBlock(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix, CenterPoint centerPoint) {
         this.normalMatrix = normalMatrix;
         this.modelViewMatrix = modelViewMatrix;
         this.uMatrixLocation = uMatrixLocation;
         this.projectionMatrix = projectionMatrix;
+        this.centerPoint = centerPoint;
     }
 
-    public abstract void translate(int offsetX, int offsetY);
+    public abstract void translate(int offsetX, int offsetY, int offsetZ);
 
     /**
      * rotate around x axis.
@@ -61,7 +65,9 @@ public abstract class BaseBlock {
                     if (validSpace[i][j][k]) {
                         blockCount++;
                         blockPosition = CubeTool.combineArrays(blockPosition, CubeTool.getCubePosition(BLOCK_LENGTH,
-                                BLOCK_LENGTH * 2 * (i - 1), BLOCK_LENGTH * 2 * (j - 1), BLOCK_LENGTH * 2 * (k - 1)));
+                                BLOCK_LENGTH * 2 * (i - 1) - BLOCK_LENGTH * (centerPoint.x - 1),
+                                BLOCK_LENGTH * 2 * (j - 1) - BLOCK_LENGTH * (centerPoint.y - 1),
+                                BLOCK_LENGTH * 2 * (k - 1) - BLOCK_LENGTH * (centerPoint.z - 1)));
                         texturePosition = CubeTool.combineArrays(texturePosition, CubeTool.getTexturePosition());
                         normalPosition = CubeTool.combineArrays(normalPosition, CubeTool.getNormalPosition());
                     }
@@ -93,10 +99,13 @@ public abstract class BaseBlock {
         float[] MM = new float[16];
 
         Matrix.setIdentityM(MM, 0);
-        Matrix.translateM(MM, 0, 0, (float) (0.1 * height), 0);
-        Matrix.rotateM(MM, 0, 10f, 0, 0, 1);
-        Matrix.rotateM(MM, 0, 20f, 0, 1, 0);
-        Matrix.rotateM(MM, 0, 30f, 1, 0, 0);
+        // basic rotate
+        Matrix.rotateM(MM, 0, 37f, 1, 0, 0);
+        Matrix.rotateM(MM, 0, 45f, 0, 1, 0);
+        Matrix.translateM(MM, 0, BLOCK_LENGTH * (centerPoint.x - 1),
+                BLOCK_LENGTH * (centerPoint.y - 1), BLOCK_LENGTH * (centerPoint.z - 1));
+        Matrix.rotateM(MM, 0, rotateX, 1, 0, 0);
+        Matrix.rotateM(MM, 0, rotateY, 0, 0, 1);
 
         Matrix.multiplyMM(MVPM, 0, projectionMatrix, 0, MM, 0);
         GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, MVPM, 0);
@@ -104,5 +113,45 @@ public abstract class BaseBlock {
         GLES20.glUniformMatrix3fv(normalMatrix, 1, false, Utils.mat4ToMat3(MM), 0);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36 * blockCount);
+    }
+
+    public static class CenterPoint {
+        public float x;
+        public float y;
+        public float z;
+
+        public CenterPoint(float x, float y, float z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    }
+
+    protected void rotateAroundX(boolean positive) {
+        if (positive) {
+            rotateX += 90f;
+            if (rotateX > 360f) {
+                rotateX -= 360f;
+            }
+        } else {
+            rotateX -= 90f;
+            if (rotateX < -360f) {
+                rotateX += 360f;
+            }
+        }
+    }
+
+    protected void rotateAroundY(boolean positive) {
+        if (positive) {
+            rotateY += 90f;
+            if (rotateY > 360f) {
+                rotateY -= 360f;
+            }
+        } else {
+            rotateY -= 90f;
+            if (rotateY < -360f) {
+                rotateY += 360f;
+            }
+        }
     }
 }

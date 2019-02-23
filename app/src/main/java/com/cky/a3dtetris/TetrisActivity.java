@@ -6,8 +6,14 @@ import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
+import android.view.View;
 
 public class TetrisActivity extends AppCompatActivity {
+
+    private GameRenderer renderer;
+    float touchX;
+    float touchY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,14 +29,40 @@ public class TetrisActivity extends AppCompatActivity {
 
         Resources resources = this.getResources();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        GameRenderer renderer = new GameRenderer(TetrisActivity.this, displayMetrics.heightPixels, displayMetrics.widthPixels);
+        renderer = new GameRenderer(TetrisActivity.this, displayMetrics.heightPixels, displayMetrics.widthPixels);
         gameView.setRenderer(renderer);
         gameView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+
+        gameView.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    touchX = event.getX();
+                    touchY = event.getY();
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getX() < ((float) renderer.getScreenWidth()) / 2f) {
+                        if (event.getY() > touchY) {
+                            renderer.getBlockB().rotateY(true);
+                        } else {
+                            renderer.getBlockB().rotateY(false);
+                        }
+                    } else {
+                        if (event.getY() > touchY) {
+                            renderer.getBlockB().rotateX(true);
+                        } else {
+                            renderer.getBlockB().rotateX(false);
+                        }
+                    }
+                }
+                return true;
+            }
+        });
     }
 
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }
