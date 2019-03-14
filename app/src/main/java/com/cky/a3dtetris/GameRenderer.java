@@ -38,9 +38,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private int uMatrixLocation;
     private int uColor;
 
-    // 顶点着色器的脚本
     private static final String verticesShader
-            = "attribute vec3 vPosition;            \n" // 顶点位置属性vPosition
+            = "attribute vec3 vPosition;            \n"
             + "attribute vec3 vNormalPosition;            \n"
             + "attribute vec2 a_TextureCoordinates; \n"
             + "varying vec2 v_TextureCoordinates; \n"
@@ -57,18 +56,18 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             + "vec3 s = normalize(vec3(LightPosition - eyeCoords));\n"
             + "LightIntensity = Ld * Kd * max( dot( s, tnorm ), 0.5); "
             + " v_TextureCoordinates = a_TextureCoordinates;\n"
-            + "   gl_Position = uMatrix * vec4(vPosition,1.0);\n" // 确定顶点位置
+            + "   gl_Position = uMatrix * vec4(vPosition,1.0);\n"
             + "}";
 
-    // 片元着色器的脚本
     private static final String fragmentShader
-            = "precision mediump float;         \n" // 声明float类型的精度为中等(精度越高越耗资源)
-            + "uniform vec4 uColor;             \n" // uniform的属性uColor
+            = "precision mediump float;         \n"
+            + "uniform vec4 uColor;             \n"
             + "varying vec3 LightIntensity;   \n"
             + "uniform sampler2D u_TextureUnit;\n"
             + "varying vec2 v_TextureCoordinates;"
             + "void main(){                     \n"
-            + "   gl_FragColor = vec4(LightIntensity, 1.0) *texture2D(u_TextureUnit, v_TextureCoordinates)* uColor + vec4(0.3, 0.3, 0.3, 1.0) * texture2D(u_TextureUnit, v_TextureCoordinates);        \n"
+            + "   gl_FragColor = vec4(LightIntensity, 1.0) *texture2D(u_TextureUnit, v_TextureCoordinates)* uColor " +
+            "+ vec4(0.3, 0.3, 0.3, 1.0) * texture2D(u_TextureUnit, v_TextureCoordinates);        \n"
             + "}";
 
     private Context context;
@@ -131,6 +130,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         blockB.height = 2;
     }
 
+    // todo test code
     private BlockA blockA;
     private BlockB blockB;
 
@@ -155,6 +155,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
+        // todo test code
         blockB.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
         blockB.draw();
     }

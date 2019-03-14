@@ -21,16 +21,16 @@ public class BlockB extends BaseBlock {
 
     @Override
     public void translate(int offsetX, int offsetY, int offsetZ) {
-
+        // todo: use array transform to implement 
     }
 
     @Override
     public void rotateX(boolean isUpDirection) {
-        rotateAroundX(isUpDirection);
+        rotateAroundX(isUpDirection); // todo: use array transform to implement
     }
 
     @Override
     public void rotateY(boolean isUpDirection) {
-        rotateAroundY(isUpDirection);
+        rotateAroundY(isUpDirection);  // todo: use array transform to implement
     }
 }

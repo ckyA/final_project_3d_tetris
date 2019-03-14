@@ -65,9 +65,9 @@ public abstract class BaseBlock {
                     if (validSpace[i][j][k]) {
                         blockCount++;
                         blockPosition = CubeTool.combineArrays(blockPosition, CubeTool.getCubePosition(BLOCK_LENGTH,
-                                BLOCK_LENGTH * 2 * (i - 1) - BLOCK_LENGTH * (centerPoint.x - 1),
-                                BLOCK_LENGTH * 2 * (j - 1) - BLOCK_LENGTH * (centerPoint.y - 1),
-                                BLOCK_LENGTH * 2 * (k - 1) - BLOCK_LENGTH * (centerPoint.z - 1)));
+                                BLOCK_LENGTH * 2 * (i - 1) ,
+                                BLOCK_LENGTH * 2 * (j - 1) ,
+                                BLOCK_LENGTH * 2 * (k - 1) ));
                         texturePosition = CubeTool.combineArrays(texturePosition, CubeTool.getTexturePosition());
                         normalPosition = CubeTool.combineArrays(normalPosition, CubeTool.getNormalPosition());
                     }
@@ -102,8 +102,8 @@ public abstract class BaseBlock {
         // basic rotate
         Matrix.rotateM(MM, 0, 37f, 1, 0, 0);
         Matrix.rotateM(MM, 0, 45f, 0, 1, 0);
-        Matrix.translateM(MM, 0, BLOCK_LENGTH * (centerPoint.x - 1),
-                BLOCK_LENGTH * (centerPoint.y - 1), BLOCK_LENGTH * (centerPoint.z - 1));
+//        Matrix.translateM(MM, 0, BLOCK_LENGTH * (centerPoint.x - 1),
+//                BLOCK_LENGTH * (centerPoint.y - 1), BLOCK_LENGTH * (centerPoint.z - 1));
         Matrix.rotateM(MM, 0, rotateX, 1, 0, 0);
         Matrix.rotateM(MM, 0, rotateY, 0, 0, 1);
 
