@@ -10,13 +10,12 @@ import android.opengl.Matrix;
 
 import com.cky.a3dtetris.shape.BlockA;
 import com.cky.a3dtetris.shape.BlockB;
-import com.cky.a3dtetris.shape.CubeTool;
+import com.cky.a3dtetris.shape.Floor;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.GLES20.GL_TEXTURE_2D;
-import static android.opengl.GLES20.glGenerateMipmap;
 import static android.opengl.Matrix.orthoM;
 
 
@@ -71,7 +70,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             + "}";
 
     private Context context;
-    private int texture;
+    private int blockTexture;
+    private int floorTexture;
 
 
     public GameRenderer(Context context, int screenHeight, int screenWidth) {
@@ -103,22 +103,21 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         // Light
         GLES20.glUniform3f(Kd, 1.0f, 1.0f, 1.0f);
-        GLES20.glUniform3f(Ld, 1.0f, 1.0f, 1.0f);
-        GLES20.glUniform4f(uLightPosition, -0.3f, -0.7f, 1f, 1.0f);
+        GLES20.glUniform3f(Ld, 1.0f, 1f, 1.0f);
+        GLES20.glUniform4f(uLightPosition, 0.5f, 0.8f, 1f, 1.0f);
 
 //        GLES20.glUniform4f(uColor, 1f, 0f, 0f, 1.0f);
 //
 //        // set normal line
-//        GLES20.glVertexAttribPointer(vNormalPosition, 3, GLES20.GL_FLOAT, false, 0, Utils.getFBVertices(CubeTool.getNormalPosition()));
+//        GLES20.glVertexAttribPointer(vNormalPosition, 3, GLES20.GL_FLOAT, false, 0, Utils.getFBVertices(CubeTool.getCubeNormalPosition()));
 //        GLES20.glEnableVertexAttribArray(vNormalPosition);
-//
-        // texture
-        texture = loadTexture(context, R.drawable.basic_square);
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
-        GLES20.glUniform1i(uTextureUnitLocation, 0);
+
+        // Texture
+        blockTexture = loadTexture(context, R.drawable.basic_square);
+        floorTexture = loadTexture(context, R.drawable.floor_texture);
+
 //        GLES20.glVertexAttribPointer(aTextureCoordinatesLocation, 2, GLES20.GL_FLOAT, false, 0,
-//                Utils.getFBVertices(CubeTool.getTexturePosition()));
+//                Utils.getFBVertices(CubeTool.getCubeTexturePosition()));
 //        GLES20.glEnableVertexAttribArray(aTextureCoordinatesLocation);
 //
 //        // set shapes` location
@@ -128,14 +127,22 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         blockA = new BlockA(NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
         blockB = new BlockB(NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
         blockB.height = 2;
+
+        floor = new Floor(NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
+
     }
 
     // todo test code
     private BlockA blockA;
     private BlockB blockB;
+    private Floor floor;
 
     public BlockB getBlockB() { // todo used to test
         return blockB;
+    }
+
+    public Floor getFloor() {
+        return floor;
     }
 
     @Override
@@ -157,7 +164,16 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         // todo test code
         blockB.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, blockTexture);
+        GLES20.glUniform1i(uTextureUnitLocation, 0);
         blockB.draw();
+
+        floor.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, floorTexture);
+        GLES20.glUniform1i(uTextureUnitLocation, 1);
+        floor.draw();
     }
 
     @Deprecated

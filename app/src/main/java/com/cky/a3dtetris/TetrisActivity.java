@@ -1,5 +1,6 @@
 package com.cky.a3dtetris;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
@@ -41,6 +42,22 @@ public class TetrisActivity extends AppCompatActivity {
                     touchX = event.getX();
                     touchY = event.getY();
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    // check floor
+                    int screenWidth = renderer.getScreenWidth();
+                    int screenHeight = renderer.getScreenHeight();
+                    int floorHeight = (int) (((float) screenWidth / 2f) + ((float) screenHeight / 2f));
+                    if (touchY < floorHeight + 100 && touchY > floorHeight - 100) {
+                        if (touchX > 200 && touchX < screenWidth - 200) {
+                            if (event.getX() > touchX) {
+                                renderer.getFloor().rotate(true);
+                            } else {
+                                renderer.getFloor().rotate(false);
+                            }
+                            return true;
+                        }
+                    }
+
                     if (event.getX() < ((float) renderer.getScreenWidth()) / 2f) {
                         if (event.getY() > touchY) {
                             renderer.getBlockB().rotateY(true);

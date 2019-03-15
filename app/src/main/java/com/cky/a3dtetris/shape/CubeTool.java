@@ -90,11 +90,11 @@ public class CubeTool {
         };
     }
 
-    public static float[] getTexturePosition() {
+    public static float[] getCubeTexturePosition() {
         return texturePosition;
     }
 
-    public static float[] getNormalPosition() {
+    public static float[] getCubeNormalPosition() {
         return normalPosition;
     }
 
@@ -197,4 +197,6 @@ public class CubeTool {
             0, -1, 0,
             0, -1, 0
     };
+
+
 }

@@ -12,7 +12,7 @@ public abstract class BaseBlock {
     protected float g = 0;
     protected float b = 0;
 
-    private static final float BLOCK_LENGTH = 0.1f;
+    public static final float BLOCK_LENGTH = 0.1f;
 
     // used to record which cube should be draw at this 3 x 3 x3 space. true: need draw.
     protected boolean[][][] validSpace = new boolean[3][3][3];
@@ -22,6 +22,7 @@ public abstract class BaseBlock {
     private int uMatrixLocation;
     private float[] projectionMatrix;
     private int blockCount;
+
     private CenterPoint centerPoint;
 
     private float rotateX;
@@ -68,8 +69,8 @@ public abstract class BaseBlock {
                                 BLOCK_LENGTH * 2 * (i - 1) ,
                                 BLOCK_LENGTH * 2 * (j - 1) ,
                                 BLOCK_LENGTH * 2 * (k - 1) ));
-                        texturePosition = CubeTool.combineArrays(texturePosition, CubeTool.getTexturePosition());
-                        normalPosition = CubeTool.combineArrays(normalPosition, CubeTool.getNormalPosition());
+                        texturePosition = CubeTool.combineArrays(texturePosition, CubeTool.getCubeTexturePosition());
+                        normalPosition = CubeTool.combineArrays(normalPosition, CubeTool.getCubeNormalPosition());
                     }
                 }
             }
@@ -100,7 +101,7 @@ public abstract class BaseBlock {
 
         Matrix.setIdentityM(MM, 0);
         // basic rotate
-        Matrix.rotateM(MM, 0, 37f, 1, 0, 0);
+        Matrix.rotateM(MM, 0, 24f, 1, 0, 0);
         Matrix.rotateM(MM, 0, 45f, 0, 1, 0);
 //        Matrix.translateM(MM, 0, BLOCK_LENGTH * (centerPoint.x - 1),
 //                BLOCK_LENGTH * (centerPoint.y - 1), BLOCK_LENGTH * (centerPoint.z - 1));

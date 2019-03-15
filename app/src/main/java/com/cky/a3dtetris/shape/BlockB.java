@@ -21,7 +21,7 @@ public class BlockB extends BaseBlock {
 
     @Override
     public void translate(int offsetX, int offsetY, int offsetZ) {
-        // todo: use array transform to implement 
+        // todo: use array transform to implement
     }
 
     @Override
