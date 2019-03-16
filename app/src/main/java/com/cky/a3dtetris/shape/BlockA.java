@@ -2,10 +2,8 @@ package com.cky.a3dtetris.shape;
 
 public class BlockA extends BaseBlock {
 
-    private static CenterPoint centerPoint = new CenterPoint(1,1,1);
-
     public BlockA(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
-        super(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix, centerPoint);
+        super(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
             r = 1;
             g = 0;
             b = 0;

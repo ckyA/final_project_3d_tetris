@@ -6,8 +6,6 @@ import android.util.Log;
 
 import com.cky.a3dtetris.Utils;
 
-import java.util.Arrays;
-
 public abstract class BaseBlock {
 
     private final static String TAG = "BaseBlock";
@@ -17,10 +15,10 @@ public abstract class BaseBlock {
     protected float g = 0;
     protected float b = 0;
 
-    public static final float BLOCK_LENGTH = 0.1f;
+    static final float BLOCK_LENGTH = 0.1f;
 
     // used to record which cube should be draw at this 3 x 3 x3 space. true: need draw.
-    protected boolean[][][] validSpace = new boolean[3][3][3];
+    boolean[][][] validSpace = new boolean[3][3][3];
 
     private int normalMatrix;
     private int modelViewMatrix;
@@ -28,17 +26,11 @@ public abstract class BaseBlock {
     private float[] projectionMatrix;
     private int blockCount;
 
-    private CenterPoint centerPoint;
-
-    private float rotateX;
-    private float rotateY;
-
-    public BaseBlock(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix, CenterPoint centerPoint) {
+    BaseBlock(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
         this.normalMatrix = normalMatrix;
         this.modelViewMatrix = modelViewMatrix;
         this.uMatrixLocation = uMatrixLocation;
         this.projectionMatrix = projectionMatrix;
-        this.centerPoint = centerPoint;
     }
 
     public enum Direction {
@@ -214,8 +206,9 @@ public abstract class BaseBlock {
      * @param isUpDirection rotate direction
      */
     public void rotateX(boolean isUpDirection) {
-
-        boolean[][][] temporary = new boolean[3][3][3]; // clone
+        boolean[][][] res = new boolean[3][3][3];
+        boolean[][][] temporary = new boolean[3][3][3];
+        // clone
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 for (int k = 0; k < 3; k++) {
@@ -223,6 +216,9 @@ public abstract class BaseBlock {
                 }
             }
         }
+
+        float[] oldPosition = new float[4];
+        float[] newPosition = new float[4];
 
         if (isUpDirection) { // clockwise
             float[] MM = new float[16];
@@ -232,13 +228,16 @@ public abstract class BaseBlock {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     for (int k = 0; k < 3; k++) {
-                        float[] oldPosition = new float[]{i - 1, j - 1, k - 1, 1};
-                        float[] newPosition = new float[4];
-                        Log.i(TAG, Arrays.toString(oldPosition));
+                        oldPosition[0] = i - 1;
+                        oldPosition[1] = j - 1;
+                        oldPosition[2] = k - 1;
+                        oldPosition[3] = 1;
+                        newPosition[0] = 0;
+                        newPosition[1] = 0;
+                        newPosition[2] = 0;
+                        newPosition[3] = 0;
                         Matrix.multiplyMV(newPosition, 0, MM, 0, oldPosition, 0);
-                        Log.i(TAG, Math.round(newPosition[0]) + " " + Math.round(newPosition[1]) + " " + Math.round(newPosition[2]) + " ssss");
-
-                        validSpace[i][j][k] = temporary[Math.round(newPosition[0]) + 1][Math.round(newPosition[1]) + 1][Math.round(newPosition[2]) + 1];
+                        res[i][j][k] = temporary[Math.round(newPosition[0]) + 1][Math.round(newPosition[1]) + 1][Math.round(newPosition[2]) + 1];
                     }
                 }
             }
@@ -250,17 +249,22 @@ public abstract class BaseBlock {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     for (int k = 0; k < 3; k++) {
-                        float[] oldPosition = new float[]{i - 1, j - 1, k - 1, 1};
-                        float[] newPosition = new float[4];
-                        Log.i(TAG, Arrays.toString(oldPosition));
+                        oldPosition[0] = i - 1;
+                        oldPosition[1] = j - 1;
+                        oldPosition[2] = k - 1;
+                        oldPosition[3] = 1;
+                        newPosition[0] = 0;
+                        newPosition[1] = 0;
+                        newPosition[2] = 0;
+                        newPosition[3] = 0;
                         Matrix.multiplyMV(newPosition, 0, MM, 0, oldPosition, 0);
-                        Log.i(TAG, Math.round(newPosition[0]) + " " + Math.round(newPosition[1]) + " " + Math.round(newPosition[2]) + " ssss");
-
-                        validSpace[i][j][k] = temporary[Math.round(newPosition[0]) + 1][Math.round(newPosition[1]) + 1][Math.round(newPosition[2]) + 1];
+                        res[i][j][k] = temporary[Math.round(newPosition[0]) + 1][Math.round(newPosition[1]) + 1][Math.round(newPosition[2]) + 1];
                     }
                 }
             }
         }
+        validSpace = res;
+        move(Direction.Z, true);
     }
 
     /**
@@ -269,7 +273,7 @@ public abstract class BaseBlock {
      * @param isUpDirection rotate direction
      */
     public void rotateY(boolean isUpDirection) {
-
+        boolean[][][] res = new boolean[3][3][3];
         boolean[][][] temporary = new boolean[3][3][3]; // clone
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -279,6 +283,9 @@ public abstract class BaseBlock {
             }
         }
 
+        float[] oldPosition = new float[4];
+        float[] newPosition = new float[4];
+
         if (isUpDirection) { // clockwise
             float[] MM = new float[16];
             Matrix.setIdentityM(MM, 0);
@@ -287,13 +294,16 @@ public abstract class BaseBlock {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     for (int k = 0; k < 3; k++) {
-                        float[] oldPosition = new float[]{i - 1, j - 1, k - 1, 1};
-                        float[] newPosition = new float[4];
-                        Log.i(TAG, Arrays.toString(oldPosition));
+                        oldPosition[0] = i - 1;
+                        oldPosition[1] = j - 1;
+                        oldPosition[2] = k - 1;
+                        oldPosition[3] = 1;
+                        newPosition[0] = 0;
+                        newPosition[1] = 0;
+                        newPosition[2] = 0;
+                        newPosition[3] = 0;
                         Matrix.multiplyMV(newPosition, 0, MM, 0, oldPosition, 0);
-                        Log.i(TAG, Math.round(newPosition[0]) + " " + Math.round(newPosition[1]) + " " + Math.round(newPosition[2]) + " ssss");
-
-                        validSpace[i][j][k] = temporary[Math.round(newPosition[0]) + 1][Math.round(newPosition[1]) + 1][Math.round(newPosition[2]) + 1];
+                        res[i][j][k] = temporary[Math.round(newPosition[0]) + 1][Math.round(newPosition[1]) + 1][Math.round(newPosition[2]) + 1];
                     }
                 }
             }
@@ -305,17 +315,22 @@ public abstract class BaseBlock {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     for (int k = 0; k < 3; k++) {
-                        float[] oldPosition = new float[]{i - 1, j - 1, k - 1, 1};
-                        float[] newPosition = new float[4];
-                        Log.i(TAG, Arrays.toString(oldPosition));
+                        oldPosition[0] = i - 1;
+                        oldPosition[1] = j - 1;
+                        oldPosition[2] = k - 1;
+                        oldPosition[3] = 1;
+                        newPosition[0] = 0;
+                        newPosition[1] = 0;
+                        newPosition[2] = 0;
+                        newPosition[3] = 0;
                         Matrix.multiplyMV(newPosition, 0, MM, 0, oldPosition, 0);
-                        Log.i(TAG, Math.round(newPosition[0]) + " " + Math.round(newPosition[1]) + " " + Math.round(newPosition[2]) + " ssss");
-
-                        validSpace[i][j][k] = temporary[Math.round(newPosition[0]) + 1][Math.round(newPosition[1]) + 1][Math.round(newPosition[2]) + 1];
+                        res[i][j][k] = temporary[Math.round(newPosition[0]) + 1][Math.round(newPosition[1]) + 1][Math.round(newPosition[2]) + 1];
                     }
                 }
             }
         }
+        validSpace = res;
+        move(Direction.Z, true);
     }
 
 
@@ -370,10 +385,6 @@ public abstract class BaseBlock {
         // Because of the transformation, the z axis become the y axis
         Matrix.rotateM(MM, 0, 24f, 1, 0, 0);
         Matrix.rotateM(MM, 0, 45f, 0, 1, 0);
-//        Matrix.translateM(MM, 0, BLOCK_LENGTH * (centerPoint.x - 1),
-//                BLOCK_LENGTH * (centerPoint.y - 1), BLOCK_LENGTH * (centerPoint.z - 1));
-        Matrix.rotateM(MM, 0, rotateX, 1, 0, 0);
-        Matrix.rotateM(MM, 0, rotateY, 0, 0, 1);
 
         Matrix.multiplyMM(MVPM, 0, projectionMatrix, 0, MM, 0);
         GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, MVPM, 0);
@@ -383,45 +394,4 @@ public abstract class BaseBlock {
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36 * blockCount);
     }
 
-    public static class CenterPoint {
-        public float x;
-        public float y;
-        public float z;
-
-        public CenterPoint(float x, float y, float z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }
-
-    @Deprecated
-    protected void rotateAroundX(boolean positive) {
-        if (positive) {
-            rotateX += 90f;
-            if (rotateX > 360f) {
-                rotateX -= 360f;
-            }
-        } else {
-            rotateX -= 90f;
-            if (rotateX < -360f) {
-                rotateX += 360f;
-            }
-        }
-    }
-
-    @Deprecated
-    protected void rotateAroundY(boolean positive) {
-        if (positive) {
-            rotateY += 90f;
-            if (rotateY > 360f) {
-                rotateY -= 360f;
-            }
-        } else {
-            rotateY -= 90f;
-            if (rotateY < -360f) {
-                rotateY += 360f;
-            }
-        }
-    }
 }
