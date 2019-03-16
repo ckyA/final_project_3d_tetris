@@ -50,7 +50,6 @@ public class Floor {
         Matrix.setIdentityM(MM, 0);
         // basic transformation :
         // Because of the transformation, the z axis become the y axis
-        // ... it`s troublesome to fix it, so let it go.
         Matrix.rotateM(MM, 0, 24f, 1, 0, 0);
         Matrix.rotateM(MM, 0, 45f, 0, 1, 0);
 

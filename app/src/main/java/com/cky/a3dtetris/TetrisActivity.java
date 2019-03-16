@@ -1,6 +1,5 @@
 package com.cky.a3dtetris;
 
-import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
@@ -36,7 +35,7 @@ public class TetrisActivity extends AppCompatActivity {
         gameView.setRenderer(renderer);
         gameView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
-        gameView.setOnTouchListener(new View.OnTouchListener() {
+        View.OnTouchListener listener = new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -59,24 +58,38 @@ public class TetrisActivity extends AppCompatActivity {
                             return true;
                         }
                     }
-                    // TODO TEST CODE
+//                    // TODO TEST CODE
+//                    if (event.getX() < ((float) renderer.getScreenWidth()) / 2f) {
+//                        if (event.getY() > touchY) {
+//                            renderer.getBlockB().move(BaseBlock.Direction.X, true);
+//                        } else {
+//                            renderer.getBlockB().move(BaseBlock.Direction.X, false);
+//                        }
+//                    } else {
+//                        if (event.getY() > touchY) {
+//                            renderer.getBlockB().move(BaseBlock.Direction.Y, true);
+//                        } else {
+//                            renderer.getBlockB().move(BaseBlock.Direction.Y, false);
+//                        }
+//                    }
                     if (event.getX() < ((float) renderer.getScreenWidth()) / 2f) {
                         if (event.getY() > touchY) {
-                            renderer.getBlockB().move(BaseBlock.Direction.X,true);
+                            renderer.getBlockB().rotateX(false);
                         } else {
-                            renderer.getBlockB().move(BaseBlock.Direction.X,false);
+                            renderer.getBlockB().rotateX(true);
                         }
                     } else {
                         if (event.getY() > touchY) {
-                            renderer.getBlockB().move(BaseBlock.Direction.Y,true);
+                            renderer.getBlockB().rotateY(false);
                         } else {
-                            renderer.getBlockB().move(BaseBlock.Direction.Y,false);
+                            renderer.getBlockB().rotateY(true);
                         }
                     }
                 }
                 return true;
             }
-        });
+        };
+        gameView.setOnTouchListener(listener);
     }
 
     @Override
