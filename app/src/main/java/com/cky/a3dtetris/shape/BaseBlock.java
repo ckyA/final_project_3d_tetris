@@ -2,10 +2,13 @@ package com.cky.a3dtetris.shape;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import com.cky.a3dtetris.Utils;
 
 public abstract class BaseBlock {
+
+    private final static String TAG = "BaseBlock";
 
     public int height = 10; // the game space is 3 x 3 x 10, the blocks locate at 10 firstly.
     protected float r = 0;
@@ -36,21 +39,143 @@ public abstract class BaseBlock {
         this.centerPoint = centerPoint;
     }
 
-    public abstract void translate(int offsetX, int offsetY, int offsetZ);
+    public enum Direction {
+        X, Y, Z
+    }
+
+    /**
+     * Move the block in 4 directions.
+     *
+     * Because of the transformation, the z axis become the y axis ... it`s troublesome to fix it,
+     * so let it go.
+     *
+     * @param direction : Direction.X or Direction.Y
+     * @param positive : front or back
+     */
+    public void move(Direction direction, boolean positive) {
+        if (direction == Direction.X) {
+            if (positive) {
+                // whether block can be moved
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        if (validSpace[0][i][j]) {
+                            Log.i(TAG, "Direction.X true: can`t move");
+                            return;
+                        }
+                    }
+                }
+                // Then move
+                //boolean[][][] temp = new boolean[3][3][3];
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[0][i][j] = validSpace[1][i][j];
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[1][i][j] = validSpace[2][i][j];
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[2][i][j] = false;
+                    }
+                }
+            } else {
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        if (validSpace[2][i][j]) {
+                            Log.i(TAG, "Direction.X false: can`t move");
+                            return;
+                        }
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[2][i][j] = validSpace[1][i][j];
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[1][i][j] = validSpace[0][i][j];
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[0][i][j] = false;
+                    }
+                }
+            }
+        } else if (direction == Direction.Y) {
+            if (positive) {
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        if (validSpace[i][j][2]) {
+                            Log.i(TAG, "Direction.Y true: can`t move");
+                            return;
+                        }
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[i][j][2] = validSpace[i][j][1];
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[i][j][1] = validSpace[i][j][0];
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[i][j][0] = false;
+                    }
+                }
+            } else {
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        if (validSpace[i][j][0]) {
+                            Log.i(TAG, "Direction.Y true: can`t move");
+                            return;
+                        }
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[i][j][0] = validSpace[i][j][1];
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[i][j][1] = validSpace[i][j][2];
+                    }
+                }
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        validSpace[i][j][2] = false;
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * rotate around x axis.
      *
      * @param isUpDirection rotate direction
      */
-    public abstract void rotateX(boolean isUpDirection);
+    public void rotateX(boolean isUpDirection) {
+
+    }
 
     /**
      * rotate around y axis.
      *
      * @param isUpDirection rotate direction
      */
-    public abstract void rotateY(boolean isUpDirection);
+    public void rotateY(boolean isUpDirection) {
+
+    }
 
 
     public void refresh(int vPosition, int aTextureCoordinatesLocation, int vNormalPosition, int uColor) {
@@ -100,7 +225,9 @@ public abstract class BaseBlock {
         float[] MM = new float[16];
 
         Matrix.setIdentityM(MM, 0);
-        // basic rotate
+        // basic transformation :
+        // Because of the transformation, the z axis become the y axis
+        // ... it`s troublesome to fix it, so let it go.
         Matrix.rotateM(MM, 0, 24f, 1, 0, 0);
         Matrix.rotateM(MM, 0, 45f, 0, 1, 0);
 //        Matrix.translateM(MM, 0, BLOCK_LENGTH * (centerPoint.x - 1),
@@ -128,6 +255,7 @@ public abstract class BaseBlock {
         }
     }
 
+    @Deprecated
     protected void rotateAroundX(boolean positive) {
         if (positive) {
             rotateX += 90f;
@@ -142,6 +270,7 @@ public abstract class BaseBlock {
         }
     }
 
+    @Deprecated
     protected void rotateAroundY(boolean positive) {
         if (positive) {
             rotateY += 90f;

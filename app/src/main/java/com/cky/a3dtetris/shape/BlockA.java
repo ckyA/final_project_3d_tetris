@@ -13,19 +13,4 @@ public class BlockA extends BaseBlock {
             validSpace[1][1][1] = true;
             validSpace[1][1][2] = true;
         }
-
-    @Override
-    public void translate(int offsetX, int offsetY, int offsetZ) {
-
-    }
-
-    @Override
-    public void rotateX(boolean isUpDirection) {
-        rotateAroundX(isUpDirection);
-    }
-
-    @Override
-    public void rotateY(boolean isUpDirection) {
-        rotateAroundY(isUpDirection);
-    }
 }

@@ -10,6 +10,8 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.cky.a3dtetris.shape.BaseBlock;
+
 public class TetrisActivity extends AppCompatActivity {
 
     private GameRenderer renderer;
@@ -57,18 +59,18 @@ public class TetrisActivity extends AppCompatActivity {
                             return true;
                         }
                     }
-
+                    // TODO TEST CODE
                     if (event.getX() < ((float) renderer.getScreenWidth()) / 2f) {
                         if (event.getY() > touchY) {
-                            renderer.getBlockB().rotateY(true);
+                            renderer.getBlockB().move(BaseBlock.Direction.X,true);
                         } else {
-                            renderer.getBlockB().rotateY(false);
+                            renderer.getBlockB().move(BaseBlock.Direction.X,false);
                         }
                     } else {
                         if (event.getY() > touchY) {
-                            renderer.getBlockB().rotateX(true);
+                            renderer.getBlockB().move(BaseBlock.Direction.Y,true);
                         } else {
-                            renderer.getBlockB().rotateX(false);
+                            renderer.getBlockB().move(BaseBlock.Direction.Y,false);
                         }
                     }
                 }
