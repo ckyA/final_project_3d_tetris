@@ -41,8 +41,13 @@ public class TetrisActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     touchX = event.getX();
-                    touchY = event.getY();
+                    touchY = event.getY();s
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    if (Math.abs(event.getY() - touchY) < 100 && Math.abs(event.getX() - touchX) < 100) {
+                        // Too short movement.
+                        return true;
+                    }
 
                     // check floor
                     int screenWidth = renderer.getScreenWidth();
@@ -58,27 +63,36 @@ public class TetrisActivity extends AppCompatActivity {
                             return true;
                         }
                     }
-//                    // TODO TEST CODE
-//                    if (event.getX() < ((float) renderer.getScreenWidth()) / 2f) {
-//                        if (event.getY() > touchY) {
-//                            renderer.getBlockB().move(BaseBlock.Direction.X, true);
-//                        } else {
-//                            renderer.getBlockB().move(BaseBlock.Direction.X, false);
-//                        }
-//                    } else {
-//                        if (event.getY() > touchY) {
-//                            renderer.getBlockB().move(BaseBlock.Direction.Y, true);
-//                        } else {
-//                            renderer.getBlockB().move(BaseBlock.Direction.Y, false);
-//                        }
-//                    }
-                    if (event.getX() < ((float) renderer.getScreenWidth()) / 2f) {
+
+                    // check movement operation
+                    float centerLeft = ((float) renderer.getScreenWidth()) / 2f - ((float) renderer.getScreenWidth()) / 8f;
+                    float centerRight = ((float) renderer.getScreenWidth()) / 2f + ((float) renderer.getScreenWidth()) / 8f;
+                    if (touchX < centerRight && touchX > centerLeft) {
+                        //  from 3/8 to 5/8
+                        if (event.getY() > touchY) {
+                            if (event.getX() > touchX) {
+                                renderer.getBlockB().move(BaseBlock.Direction.Y, true);
+                            } else {
+                                renderer.getBlockB().move(BaseBlock.Direction.X, true);
+                            }
+                        } else {
+                            if (event.getX() > touchX) {
+                                renderer.getBlockB().move(BaseBlock.Direction.X, false);
+                            } else {
+                                renderer.getBlockB().move(BaseBlock.Direction.Y, false);
+                            }
+                        }
+                        return true;
+                    }
+
+                    // check rotation operation
+                    if (event.getX() < ((float) renderer.getScreenWidth()) * 3 / 8f && touchX < ((float) renderer.getScreenWidth()) * 3 / 8f) {
                         if (event.getY() > touchY) {
                             renderer.getBlockB().rotateX(false);
                         } else {
                             renderer.getBlockB().rotateX(true);
                         }
-                    } else {
+                    } else if (event.getX() > ((float) renderer.getScreenWidth()) * 5 / 8f && touchX > ((float) renderer.getScreenWidth()) * 5 / 8f) {
                         if (event.getY() > touchY) {
                             renderer.getBlockB().rotateY(false);
                         } else {

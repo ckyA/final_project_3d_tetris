@@ -11,6 +11,7 @@ public class BlockB extends BaseBlock {
         validSpace[0][0][1] = true;
         validSpace[0][1][0] = true;
         validSpace[1][0][0] = true;
+        move(Direction.Z, true);
     }
 
 }
