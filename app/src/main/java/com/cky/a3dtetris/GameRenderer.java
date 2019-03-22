@@ -8,8 +8,9 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 
-import com.cky.a3dtetris.shape.BlockA;
-import com.cky.a3dtetris.shape.BlockB;
+import com.cky.a3dtetris.shape.BaseBlock;
+import com.cky.a3dtetris.shape.BlockFactory;
+import com.cky.a3dtetris.shape.BlockType;
 import com.cky.a3dtetris.shape.Floor;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -124,21 +125,18 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 //        GLES20.glVertexAttribPointer(vPosition, 3, GLES20.GL_FLOAT, false, 0,
 //                Utils.getFBVertices(CubeTool.getCubePosition(0.2f, 0, 0,0)));
 //        GLES20.glEnableVertexAttribArray(vPosition);
-        blockA = new BlockA(NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
-        blockB = new BlockB(NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
-        blockB.height = 2;
+        fallingBlock = BlockFactory.createBlock(BlockType.F, NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
 
         floor = new Floor(NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
 
     }
 
     // todo test code
-    private BlockA blockA;
-    private BlockB blockB;
+    private BaseBlock fallingBlock;
     private Floor floor;
 
-    public BlockB getBlockB() { // todo used to test
-        return blockB;
+    public BaseBlock getFallingBlock() { // todo used to test
+        return fallingBlock;
     }
 
     public Floor getFloor() {
@@ -163,11 +161,11 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
         // todo test code
-        blockB.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
+        fallingBlock.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, blockTexture);
         GLES20.glUniform1i(uTextureUnitLocation, 0);
-        blockB.draw();
+        fallingBlock.draw();
 
         floor.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE1);

@@ -50,13 +50,13 @@ public class Floor {
         Matrix.setIdentityM(MM, 0);
         // basic transformation :
         // Because of the transformation, the z axis become the y axis
-        Matrix.rotateM(MM, 0, 24f, 1, 0, 0);
-        Matrix.rotateM(MM, 0, 45f, 0, 1, 0);
+        Matrix.rotateM(MM, 0, 20f, 1, 0, 0);
+        Matrix.rotateM(MM, 0, 40f, 0, 1, 0);
 
         checkRotationAnimation();
         Matrix.rotateM(MM, 0, rotationAngle, 0, 1, 0);
 
-        Matrix.translateM(MM, 0, 0, -1f, 0);
+        Matrix.translateM(MM, 0, 0, BaseBlock.BLOCK_LENGTH * -8.2f, 0);
 
         Matrix.multiplyMM(MVPM, 0, projectionMatrix, 0, MM, 0);
         GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, MVPM, 0);
@@ -87,6 +87,19 @@ public class Floor {
                 rotationAngle -= 5f;
                 degreeNeedRotation += 5f;
             }
+        }
+    }
+
+    private BlockType[][][] blockList = new BlockType[3][12][3]; // If null, don`t draw.
+
+    public BlockType[][][] getBlockList() {
+        return blockList;
+    }
+
+    public void fixBlock(BaseBlock block) {
+        int blockHeight = block.getHeight();
+        if (blockHeight <= 10 && blockHeight >= 1) {
+
         }
     }
 

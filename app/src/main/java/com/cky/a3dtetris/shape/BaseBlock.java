@@ -6,16 +6,16 @@ import android.util.Log;
 
 import com.cky.a3dtetris.Utils;
 
-public abstract class BaseBlock {
+public class BaseBlock {
 
     private final static String TAG = "BaseBlock";
 
-    public int height = 10; // the game space is 3 x 3 x 10, the blocks locate at 10 firstly.
+    private int height = 13; // 1 to 13, the game space is 3 x 3 x 10, the blocks locate at 10 firstly.
     protected float r = 0;
     protected float g = 0;
     protected float b = 0;
 
-    static final float BLOCK_LENGTH = 0.1f;
+    public static final float BLOCK_LENGTH = 0.1f;
 
     // used to record which cube should be draw at this 3 x 3 x3 space. true: need draw.
     boolean[][][] validSpace = new boolean[3][3][3];
@@ -31,6 +31,10 @@ public abstract class BaseBlock {
         this.modelViewMatrix = modelViewMatrix;
         this.uMatrixLocation = uMatrixLocation;
         this.projectionMatrix = projectionMatrix;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public enum Direction {
@@ -265,6 +269,7 @@ public abstract class BaseBlock {
         }
         validSpace = res;
         move(Direction.Z, true);
+        move(Direction.Z, true);
     }
 
     /**
@@ -331,8 +336,12 @@ public abstract class BaseBlock {
         }
         validSpace = res;
         move(Direction.Z, true);
+        move(Direction.Z, true);
     }
 
+    public void fall() {
+        height--;
+    }
 
     public void refresh(int vPosition, int aTextureCoordinatesLocation, int vNormalPosition, int uColor) {
 
@@ -383,8 +392,10 @@ public abstract class BaseBlock {
         Matrix.setIdentityM(MM, 0);
         // basic transformation :
         // Because of the transformation, the z axis become the y axis
-        Matrix.rotateM(MM, 0, 24f, 1, 0, 0);
-        Matrix.rotateM(MM, 0, 45f, 0, 1, 0);
+        Matrix.rotateM(MM, 0, 20f, 1, 0, 0);
+        Matrix.rotateM(MM, 0, 40f, 0, 1, 0);
+        //height
+        Matrix.translateM(MM, 0, 0, BLOCK_LENGTH * (height - 9), 0);
 
         Matrix.multiplyMM(MVPM, 0, projectionMatrix, 0, MM, 0);
         GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, MVPM, 0);
