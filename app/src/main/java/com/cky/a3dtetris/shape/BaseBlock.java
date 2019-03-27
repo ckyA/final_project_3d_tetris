@@ -10,12 +10,14 @@ public class BaseBlock {
 
     private final static String TAG = "BaseBlock";
 
-    private int height = 13; // 1 to 13, the game space is 3 x 3 x 10, the blocks locate at 10 firstly.
+    private int height = 9; // 0 to 9, the game space is 3 x 3 x 10, the blocks locate at 10 firstly.
     protected float r = 0;
     protected float g = 0;
     protected float b = 0;
 
     public static final float BLOCK_LENGTH = 0.1f;
+
+    private BlockType type;
 
     // used to record which cube should be draw at this 3 x 3 x3 space. true: need draw.
     boolean[][][] validSpace = new boolean[3][3][3];
@@ -26,15 +28,20 @@ public class BaseBlock {
     private float[] projectionMatrix;
     private int blockCount;
 
-    BaseBlock(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
+    BaseBlock(BlockType type, int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
         this.normalMatrix = normalMatrix;
         this.modelViewMatrix = modelViewMatrix;
         this.uMatrixLocation = uMatrixLocation;
         this.projectionMatrix = projectionMatrix;
+        this.type = type;
     }
 
     public int getHeight() {
         return height;
+    }
+
+    public BlockType getType() {
+        return type;
     }
 
     public enum Direction {
@@ -355,12 +362,12 @@ public class BaseBlock {
                 for (int k = 0; k < 3; k++) {
                     if (validSpace[i][j][k]) {
                         blockCount++;
-                        blockPosition = CubeTool.combineArrays(blockPosition, CubeTool.getCubePosition(BLOCK_LENGTH,
+                        blockPosition = CubeUtil.combineArrays(blockPosition, CubeUtil.getCubePosition(BLOCK_LENGTH,
                                 BLOCK_LENGTH * 2 * (i - 1),
                                 BLOCK_LENGTH * 2 * (j - 1),
                                 BLOCK_LENGTH * 2 * (k - 1)));
-                        texturePosition = CubeTool.combineArrays(texturePosition, CubeTool.getCubeTexturePosition());
-                        normalPosition = CubeTool.combineArrays(normalPosition, CubeTool.getCubeNormalPosition());
+                        texturePosition = CubeUtil.combineArrays(texturePosition, CubeUtil.getCubeTexturePosition());
+                        normalPosition = CubeUtil.combineArrays(normalPosition, CubeUtil.getCubeNormalPosition());
                     }
                 }
             }
@@ -395,7 +402,7 @@ public class BaseBlock {
         Matrix.rotateM(MM, 0, 20f, 1, 0, 0);
         Matrix.rotateM(MM, 0, 40f, 0, 1, 0);
         //height
-        Matrix.translateM(MM, 0, 0, BLOCK_LENGTH * (height - 9), 0);
+        Matrix.translateM(MM, 0, 0, BLOCK_LENGTH * 2 * (height - 5), 0);
 
         Matrix.multiplyMM(MVPM, 0, projectionMatrix, 0, MM, 0);
         GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, MVPM, 0);

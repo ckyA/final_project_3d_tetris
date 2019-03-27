@@ -44,7 +44,7 @@ public class TetrisActivity extends AppCompatActivity {
                     touchY = event.getY();
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                    if (Math.abs(event.getY() - touchY) < 50 && Math.abs(event.getX() - touchX) < 50) {
+                    if (Math.abs(event.getY() - touchY) < 30 && Math.abs(event.getX() - touchX) < 30) {
                         // Too short movement.
                         return true;
                     }
@@ -52,9 +52,10 @@ public class TetrisActivity extends AppCompatActivity {
                     // check floor
                     int screenWidth = renderer.getScreenWidth();
                     int screenHeight = renderer.getScreenHeight();
-                    int floorHeight = (int) (((float) screenWidth / 2f) + ((float) screenHeight / 2f));
-                    if (touchY < floorHeight + 100 && touchY > floorHeight - 100) {
-                        if (touchX > 200 && touchX < screenWidth - 200) {
+                    int interval = (int) ((float)screenWidth / 3f);
+                    int floorHeight = (int) (((float) screenWidth * 0.92f / 2f) + ((float) screenHeight / 2f));
+                    if (event.getY() > floorHeight - interval && touchY > floorHeight - interval) {
+                        if (touchX > interval && touchX < screenWidth - interval) {
                             if (event.getX() > touchX) {
                                 renderer.getFloor().rotate(true);
                             } else {

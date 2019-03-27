@@ -5,10 +5,10 @@ import android.util.Log;
 import java.util.Arrays;
 
 /**
- * Used to get coordinate of each shapes using CubeTool.
+ * Used to get coordinate of each shapes using CubeUtil.
  */
 
-public class CubeTool {
+public class CubeUtil {
 
     public static float[] combineArrays(float[]... positions) {
         int length = 0;
@@ -34,59 +34,55 @@ public class CubeTool {
     }
 
     public static float[] getCubePosition(float l, float x, float y, float z) {
-        float length = l;
-        float offsetX = x;
-        float offsetY = y;
-        float offsetZ = z;
         return new float[] {
 
                 // Front face
-                -length + offsetX, length + offsetY, length + offsetZ,
-                -length + offsetX, -length + offsetY, length + offsetZ,
-                length + offsetX, length + offsetY, length + offsetZ,
-                -length + offsetX, -length + offsetY, length + offsetZ,
-                length + offsetX, -length + offsetY, length + offsetZ,
-                length + offsetX, length + offsetY, length + offsetZ,
+                -l + x, l + y, l + z,
+                -l + x, -l + y, l + z,
+                l + x, l + y, l + z,
+                -l + x, -l + y, l + z,
+                l + x, -l + y, l + z,
+                l + x, l + y, l + z,
 
                 // Right face
-                length + offsetX, length + offsetY, length + offsetZ,
-                length + offsetX, -length + offsetY, length + offsetZ,
-                length + offsetX, length + offsetY, -length + offsetZ,
-                length + offsetX, -length + offsetY, length + offsetZ,
-                length + offsetX, -length + offsetY, -length + offsetZ,
-                length + offsetX, length + offsetY, -length + offsetZ,
+                l + x, l + y, l + z,
+                l + x, -l + y, l + z,
+                l + x, l + y, -l + z,
+                l + x, -l + y, l + z,
+                l + x, -l + y, -l + z,
+                l + x, l + y, -l + z,
 
                 // Back face
-                length + offsetX, length + offsetY, -length + offsetZ,
-                length + offsetX, -length + offsetY, -length + offsetZ,
-                -length + offsetX, length + offsetY, -length + offsetZ,
-                length + offsetX, -length + offsetY, -length + offsetZ,
-                -length + offsetX, -length + offsetY, -length + offsetZ,
-                -length + offsetX, length + offsetY, -length + offsetZ,
+                l + x, l + y, -l + z,
+                l + x, -l + y, -l + z,
+                -l + x, l + y, -l + z,
+                l + x, -l + y, -l + z,
+                -l + x, -l + y, -l + z,
+                -l + x, l + y, -l + z,
 
                 // Left face
-                -length + offsetX, length + offsetY, -length + offsetZ,
-                -length + offsetX, -length + offsetY, -length + offsetZ,
-                -length + offsetX, length + offsetY, length + offsetZ,
-                -length + offsetX, -length + offsetY, -length + offsetZ,
-                -length + offsetX, -length + offsetY, length + offsetZ,
-                -length + offsetX, length + offsetY, length + offsetZ,
+                -l + x, l + y, -l + z,
+                -l + x, -l + y, -l + z,
+                -l + x, l + y, l + z,
+                -l + x, -l + y, -l + z,
+                -l + x, -l + y, l + z,
+                -l + x, l + y, l + z,
 
                 // Top face
-                -length + offsetX, length + offsetY, -length + offsetZ,
-                -length + offsetX, length + offsetY, length + offsetZ,
-                length + offsetX, length + offsetY, -length + offsetZ,
-                -length + offsetX, length + offsetY, length + offsetZ,
-                length + offsetX, length + offsetY, length + offsetZ,
-                length + offsetX, length + offsetY, -length + offsetZ,
+                -l + x, l + y, -l + z,
+                -l + x, l + y, l + z,
+                l + x, l + y, -l + z,
+                -l + x, l + y, l + z,
+                l + x, l + y, l + z,
+                l + x, l + y, -l + z,
 
                 // Bottom face
-                length + offsetX, -length + offsetY, -length + offsetZ,
-                length + offsetX, -length + offsetY, length + offsetZ,
-                -length + offsetX, -length + offsetY, -length + offsetZ,
-                length + offsetX, -length + offsetY, length + offsetZ,
-                -length + offsetX, -length + offsetY, length + offsetZ,
-                -length + offsetX, -length + offsetY, -length + offsetZ
+                l + x, -l + y, -l + z,
+                l + x, -l + y, l + z,
+                -l + x, -l + y, -l + z,
+                l + x, -l + y, l + z,
+                -l + x, -l + y, l + z,
+                -l + x, -l + y, -l + z
         };
     }
 

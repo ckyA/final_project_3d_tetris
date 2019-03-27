@@ -1,5 +1,7 @@
 package com.cky.a3dtetris.shape;
 
+import android.opengl.GLES20;
+
 public class BlockFactory {
 
     public static BaseBlock createBlock(BlockType type, int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
@@ -21,10 +23,35 @@ public class BlockFactory {
         }
     }
 
+    public static void setBlockColor(BlockType type, int uColor) {
+        switch (type) {
+            case A:
+                GLES20.glUniform4f(uColor, 1, 0, 0, 1.0f);
+                return;
+            case B:
+                GLES20.glUniform4f(uColor, (4f * 16f + 4f) / 255f, (14f * 16f + 15f) / 255f, (14f * 16f + 9f) / 255f, 1.0f);
+                return;
+            case C:
+                GLES20.glUniform4f(uColor, 0, 1, 0, 1.0f);
+                return;
+            case D:
+                GLES20.glUniform4f(uColor, 1, 1, 0, 1.0f);
+                return;
+            case E:
+                GLES20.glUniform4f(uColor, 1, (68F) / 255f, (96F) / 255f, 1.0f);
+                return;
+            case F:
+                GLES20.glUniform4f(uColor, 1, 185f / 255f, 73f / 255f, 1.0f);
+                return;
+            default:
+                return;
+        }
+    }
+
     static class BlockA extends BaseBlock {
 
         BlockA(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
-            super(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
+            super(BlockType.A, normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
             r = 1;
             g = 0;
             b = 0;
@@ -37,7 +64,7 @@ public class BlockFactory {
     static class BlockB extends BaseBlock {
 
         BlockB(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
-            super(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
+            super(BlockType.B, normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
             r = (4f * 16f + 4f) / 255f;
             g = (14f * 16f + 15f) / 255f;
             b = (14f * 16f + 9f) / 255f;
@@ -52,7 +79,7 @@ public class BlockFactory {
     static class BlockC extends BaseBlock {
 
         BlockC(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
-            super(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
+            super(BlockType.C, normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
             r = 0;
             g = (255f) / 255f;
             b = 0;
@@ -67,7 +94,7 @@ public class BlockFactory {
     static class BlockD extends BaseBlock {
 
         BlockD(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
-            super(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
+            super(BlockType.D, normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
             r = (255f) / 255f;
             g = (255f) / 255f;
             b = 0;
@@ -82,7 +109,7 @@ public class BlockFactory {
     static class BlockE extends BaseBlock {
 
         BlockE(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
-            super(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
+            super(BlockType.E, normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
             r = (255F) / 255f;
             g = (68F) / 255f;
             b = (96F) / 255f;
@@ -97,8 +124,8 @@ public class BlockFactory {
     static class BlockF extends BaseBlock {
 
         BlockF(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
-            super(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
-            r = 1;//44EFB9
+            super(BlockType.F, normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
+            r = 1;
             g = 185f / 255f;
             b = 73f / 255f;
             validSpace[0][1][1] = true;
