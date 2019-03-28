@@ -1,12 +1,15 @@
 package com.cky.a3dtetris;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.view.ViewConfiguration;
+
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-
-/**
- * Created by Admin on 2019/2/14.
- */
 
 public class Utils {
 
@@ -38,4 +41,80 @@ public class Utils {
 
         return vertexBuf;
     }
+
+    public static int getScreenWidth(Context context) {
+        if (context == null) {
+            return 0;
+        }
+        Resources resources = context.getResources();
+        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        return displayMetrics.widthPixels;
+    }
+
+    public static int getScreenHeight(Context context) {
+        if (context == null) {
+            return 0;
+        }
+        Resources resources = context.getResources();
+        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        return displayMetrics.heightPixels - getStatusBarHeight(resources) - getNavigationBarHeight(context);
+    }
+
+    public static int getStatusBarHeight(Resources resources) {
+        if (resources == null) {
+            return 0;
+        }
+        int statusBarHeight = 0;
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            //根据资源ID获取响应的尺寸值
+            statusBarHeight = resources.getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
+    }
+
+    public static int getNavigationBarHeight(Context context) {
+        int result = 0;
+        if (hasNavigationBar(context)) {
+            Resources res = context.getResources();
+            int resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                result = res.getDimensionPixelSize(resourceId);
+            }
+        }
+        return result;
+    }
+
+    public static boolean hasNavigationBar(Context context) {
+        Resources res = context.getResources();
+        int resourceId = res.getIdentifier("config_showNavigationBar", "bool", "android");
+        if (resourceId != 0) {
+            boolean hasNav = res.getBoolean(resourceId);
+            // check override flag
+            String sNavBarOverride = getNavBarOverride();
+            if ("1".equals(sNavBarOverride)) {
+                hasNav = false;
+            } else if ("0".equals(sNavBarOverride)) {
+                hasNav = true;
+            }
+            return hasNav;
+        } else { // fallback
+            return !ViewConfiguration.get(context).hasPermanentMenuKey();
+        }
+    }
+
+    private static String getNavBarOverride() {
+        String sNavBarOverride = null;
+        try {
+            Class c = Class.forName("android.os.SystemProperties");
+            Method m = c.getDeclaredMethod("get", String.class);
+            m.setAccessible(true);
+            sNavBarOverride = (String) m.invoke(null, "qemu.hw.mainkeys");
+        } catch (Throwable e) {
+
+        }
+        return sNavBarOverride;
+    }
+
 }
+

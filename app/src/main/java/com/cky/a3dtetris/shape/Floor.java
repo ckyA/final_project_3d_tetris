@@ -14,9 +14,12 @@ public class Floor {
     private int uMatrixLocation;
     private float[] projectionMatrix;
 
+    private BlockType[][][] blockList = new BlockType[3][10][3]; // If null, don`t draw.
+
     private float rotationAngle = 0;
     private float degreeNeedRotation = 0; // used to implement an animation
-    private int blockCount;
+    private float blockRotationAngle;
+
 
     public Floor(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
         this.normalMatrix = normalMatrix;
@@ -77,6 +80,7 @@ public class Floor {
             return;
         }
         rotationAngle = rotationAngle % 360f;
+        blockRotationAngle = 0;
         if (positive) {
             degreeNeedRotation += 90;
         } else {
@@ -89,14 +93,59 @@ public class Floor {
             if (degreeNeedRotation > 0) {
                 rotationAngle += 10f;
                 degreeNeedRotation -= 10f;
+                blockRotationAngle += 10f;
+                if (degreeNeedRotation == 0) {
+                    rotateBlockListAroundZ(true);
+                }
             } else {
                 rotationAngle -= 10f;
                 degreeNeedRotation += 10f;
+                blockRotationAngle -= 10f;
+                if (degreeNeedRotation == 0) {
+                    rotateBlockListAroundZ(false);
+                }
             }
         }
     }
 
-    private BlockType[][][] blockList = new BlockType[3][10][3]; // If null, don`t draw.
+    public void rotateBlockListAroundZ(boolean positive) {
+        BlockType[][][] res = new BlockType[3][10][3];
+        BlockType[][][] temporary = new BlockType[3][10][3];
+        // clone
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 10; j++) {
+                for (int k = 0; k < 3; k++) {
+                    temporary[i][j][k] = blockList[i][j][k];
+                }
+            }
+        }
+
+        float[] MM = new float[16];
+        Matrix.setIdentityM(MM, 0);
+        Matrix.rotateM(MM, 0, positive ? -90 : 90, 0, 1, 0);
+
+        float[] oldPosition = new float[4];
+        float[] newPosition = new float[4];
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 10; j++) {
+                for (int k = 0; k < 3; k++) {
+                    oldPosition[0] = i - 1;
+                    oldPosition[1] = j;
+                    oldPosition[2] = k - 1;
+                    oldPosition[3] = 1;
+                    newPosition[0] = 0;
+                    newPosition[1] = 0;
+                    newPosition[2] = 0;
+                    newPosition[3] = 0;
+                    Matrix.multiplyMV(newPosition, 0, MM, 0, oldPosition, 0);
+                    res[i][j][k] = temporary[Math.round(newPosition[0]) + 1][Math.round(newPosition[1])][Math.round(newPosition[2]) + 1];
+                }
+            }
+        }
+        blockRotationAngle = 0;
+        blockList = res;
+    }
 
     public BlockType[][][] getBlockList() {
         return blockList;
@@ -104,12 +153,14 @@ public class Floor {
 
     public void fixBlock(BaseBlock block) {
         int blockHeight = block.getHeight();
-        if (blockHeight <= 12 && blockHeight >= 0) {
+        if (blockHeight <= 9 && blockHeight >= 0) {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     for (int k = 0; k < 3; k++) {
-                        if (block.validSpace[i][j][k] && blockList[i][blockHeight + j][k] == null) {
-                            blockList[i][blockHeight + j][k] = block.getType();
+                        if (blockHeight >= 0) {
+                            if (block.validSpace[i][j][k] && blockList[i][blockHeight - 2 + j][k] == null) {
+                                blockList[i][blockHeight - 2 + j][k] = block.getType();
+                            }
                         }
                     }
                 }
@@ -187,7 +238,7 @@ public class Floor {
         Matrix.rotateM(MM, 0, 20f, 1, 0, 0);
         Matrix.rotateM(MM, 0, 40f, 0, 1, 0);
 
-        Matrix.rotateM(MM, 0, rotationAngle, 0, 1, 0);
+        Matrix.rotateM(MM, 0, degreeNeedRotation == 0 ? 0 : blockRotationAngle, 0, 1, 0);
 
         Matrix.multiplyMM(MVPM, 0, projectionMatrix, 0, MM, 0);
         GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, MVPM, 0);
@@ -196,7 +247,6 @@ public class Floor {
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36 * blockCount);
     }
-
 
     /**
      * @param l : the length of a block.

@@ -23,11 +23,13 @@
         android:textStyle="bold" />
 
     <ImageView
+        android:id="@+id/iv_pause"
         android:layout_width="110dp"
         android:layout_height="110dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:padding="30dp"
-        app:srcCompat="@android:drawable/ic_media_pause" />
+        android:onClick="stopOrStart"
+        android:src="@drawable/ic_pause" />
 
 </RelativeLayout>

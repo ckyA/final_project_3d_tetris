@@ -1,19 +1,21 @@
 package com.cky.a3dtetris;
 
-import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.cky.a3dtetris.shape.BaseBlock;
 
 public class TetrisActivity extends AppCompatActivity {
 
+    private GameManager manager;
     private GameRenderer renderer;
+    private ImageView pauseButton;
     float touchX;
     float touchY;
 
@@ -22,6 +24,8 @@ public class TetrisActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tetris);
 
+        pauseButton = findViewById(R.id.iv_pause);
+
         GLSurfaceView gameView = findViewById(R.id.GLSurfaceView);
         gameView.setEGLContextClientVersion(2);
 
@@ -29,9 +33,10 @@ public class TetrisActivity extends AppCompatActivity {
         gameView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         gameView.setZOrderOnTop(true);
 
-        Resources resources = this.getResources();
-        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        renderer = new GameRenderer(TetrisActivity.this, displayMetrics.heightPixels, displayMetrics.widthPixels);
+        Handler handler = new Handler();
+        manager = GameManager.create(handler);
+
+        renderer = new GameRenderer(TetrisActivity.this, Utils.getScreenHeight(this), Utils.getScreenWidth(this), manager);
         gameView.setRenderer(renderer);
         gameView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
@@ -52,7 +57,7 @@ public class TetrisActivity extends AppCompatActivity {
                     // check floor
                     int screenWidth = renderer.getScreenWidth();
                     int screenHeight = renderer.getScreenHeight();
-                    int interval = (int) ((float)screenWidth / 3f);
+                    int interval = (int) ((float) screenWidth / 3f);
                     int floorHeight = (int) (((float) screenWidth * 0.92f / 2f) + ((float) screenHeight / 2f));
                     if (event.getY() > floorHeight - interval && touchY > floorHeight - interval) {
                         if (touchX > interval && touchX < screenWidth - interval) {
@@ -88,15 +93,15 @@ public class TetrisActivity extends AppCompatActivity {
                     // check rotation operation
                     if (event.getX() < ((float) renderer.getScreenWidth()) / 3f && touchX < ((float) renderer.getScreenWidth()) / 3f) {
                         if (event.getY() > touchY) {
-                            renderer.getFallingBlock().rotateX(false);
-                        } else {
-                            renderer.getFallingBlock().rotateX(true);
-                        }
-                    } else if (event.getX() > ((float) renderer.getScreenWidth()) * 2f / 3f && touchX > ((float) renderer.getScreenWidth()) * 2f / 3f) {
-                        if (event.getY() > touchY) {
                             renderer.getFallingBlock().rotateY(false);
                         } else {
                             renderer.getFallingBlock().rotateY(true);
+                        }
+                    } else if (event.getX() > ((float) renderer.getScreenWidth()) * 2f / 3f && touchX > ((float) renderer.getScreenWidth()) * 2f / 3f) {
+                        if (event.getY() > touchY) {
+                            renderer.getFallingBlock().rotateX(false);
+                        } else {
+                            renderer.getFallingBlock().rotateX(true);
                         }
                     }
                 }
@@ -104,6 +109,26 @@ public class TetrisActivity extends AppCompatActivity {
             }
         };
         gameView.setOnTouchListener(listener);
+    }
+
+    public void stopOrStart(View view) {
+        if (manager.isPause()) {
+            manager.start();
+            if (pauseButton != null) {
+                pauseButton.setImageResource(R.drawable.ic_pause);
+            }
+        } else {
+            manager.pause();
+            if (pauseButton != null) {
+                pauseButton.setImageResource(R.drawable.ic_play);
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        manager.destroy();
     }
 
     @Override

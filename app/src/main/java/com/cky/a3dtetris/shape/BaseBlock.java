@@ -412,4 +412,7 @@ public class BaseBlock {
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36 * blockCount);
     }
 
+    public boolean[][][] getValidSpace() {
+        return validSpace;
+    }
 }

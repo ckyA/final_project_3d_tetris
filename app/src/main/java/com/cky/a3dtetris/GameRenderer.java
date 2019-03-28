@@ -10,7 +10,6 @@ import android.opengl.Matrix;
 
 import com.cky.a3dtetris.shape.BaseBlock;
 import com.cky.a3dtetris.shape.BlockFactory;
-import com.cky.a3dtetris.shape.BlockType;
 import com.cky.a3dtetris.shape.Floor;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -31,8 +30,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private int uLightPosition;
     private int Kd;
     private int Ld;
-    private int ModelViewMatrix;
-    private int NormalMatrix;
+    private int modelViewMatrix;
+    private int normalMatrix;
     private int uTextureUnitLocation;
     private int aTextureCoordinatesLocation;
     private int uMatrixLocation;
@@ -47,12 +46,12 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             + "uniform vec4 LightPosition;  \n"
             + "uniform vec3 Kd;             \n"
             + "uniform vec3 Ld;            \n"
-            + "uniform mat4 ModelViewMatrix;\n"
-            + "uniform mat3 NormalMatrix;\n"
+            + "uniform mat4 modelViewMatrix;\n"
+            + "uniform mat3 normalMatrix;\n"
             + "uniform mat4 uMatrix; \n"
             + "void main(){                         \n"
-            + "vec3 tnorm = normalize( NormalMatrix * vNormalPosition); \n"
-            + "vec4 eyeCoords = ModelViewMatrix * vec4(vPosition,1.0);\n"
+            + "vec3 tnorm = normalize( normalMatrix * vNormalPosition); \n"
+            + "vec4 eyeCoords = modelViewMatrix * vec4(vPosition,1.0);\n"
             + "vec3 s = normalize(vec3(LightPosition - eyeCoords));\n"
             + "LightIntensity = Ld * Kd * max( dot( s, tnorm ), 0.5); "
             + " v_TextureCoordinates = a_TextureCoordinates;\n"
@@ -73,12 +72,13 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private Context context;
     private int blockTexture;
     private int floorTexture;
+    private GameManager manager;
 
-
-    public GameRenderer(Context context, int screenHeight, int screenWidth) {
+    public GameRenderer(Context context, int screenHeight, int screenWidth, GameManager manager) {
         this.context = context;
         this.screenHeight = screenHeight;
         this.screenWidth = screenWidth;
+        this.manager = manager;
     }
 
     @Override
@@ -97,8 +97,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         uLightPosition = GLES20.glGetUniformLocation(program, "LightPosition");
         Kd = GLES20.glGetUniformLocation(program, "Kd");
         Ld = GLES20.glGetUniformLocation(program, "Ld");
-        ModelViewMatrix = GLES20.glGetUniformLocation(program, "ModelViewMatrix");
-        NormalMatrix = GLES20.glGetUniformLocation(program, "NormalMatrix");
+        modelViewMatrix = GLES20.glGetUniformLocation(program, "modelViewMatrix");
+        normalMatrix = GLES20.glGetUniformLocation(program, "normalMatrix");
         uTextureUnitLocation = GLES20.glGetUniformLocation(program, "u_TextureUnit");
         uColor = GLES20.glGetUniformLocation(program, "uColor");
 
@@ -107,31 +107,25 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glUniform3f(Ld, 1.0f, 1f, 1.0f);
         GLES20.glUniform4f(uLightPosition, 0.5f, 0.8f, 1f, 1.0f);
 
-//        GLES20.glUniform4f(uColor, 1f, 0f, 0f, 1.0f);
-//
-//        // set normal line
-//        GLES20.glVertexAttribPointer(vNormalPosition, 3, GLES20.GL_FLOAT, false, 0, Utils.getFBVertices(CubeUtil.getCubeNormalPosition()));
-//        GLES20.glEnableVertexAttribArray(vNormalPosition);
-
         // Texture
         blockTexture = loadTexture(context, R.drawable.basic_square);
         floorTexture = loadTexture(context, R.drawable.floor_texture);
 
-//        GLES20.glVertexAttribPointer(aTextureCoordinatesLocation, 2, GLES20.GL_FLOAT, false, 0,
-//                Utils.getFBVertices(CubeUtil.getCubeTexturePosition()));
-//        GLES20.glEnableVertexAttribArray(aTextureCoordinatesLocation);
-//
-//        // set shapes` location
-//        GLES20.glVertexAttribPointer(vPosition, 3, GLES20.GL_FLOAT, false, 0,
-//                Utils.getFBVertices(CubeUtil.getCubePosition(0.2f, 0, 0,0)));
-//        GLES20.glEnableVertexAttribArray(vPosition);
-        fallingBlock = BlockFactory.createBlock(BlockType.F, NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
+        fallingBlock = BlockFactory.createBlock(manager.createRandomBlockType(), normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
+        floor = new Floor(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
 
-        floor = new Floor(NormalMatrix, ModelViewMatrix, uMatrixLocation, projectionMatrix);
-
+        manager.setFloor(floor);
+        manager.setFallingBlock(fallingBlock);
+        manager.setOnBlockChangeListener(new GameManager.OnBlockChangeListener() {
+            @Override
+            public void onBlockChange() {
+                fallingBlock = BlockFactory.createBlock(manager.createRandomBlockType(), normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
+                manager.setFallingBlock(fallingBlock);
+            }
+        });
+        manager.start();
     }
 
-    // todo test code
     private BaseBlock fallingBlock;
     private Floor floor;
 
@@ -190,8 +184,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMM(MVM, 0, VM, 0, MM, 0);
         Matrix.multiplyMM(MVPM, 0, projectionMatrix, 0, MVM, 0);
         GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, MVPM, 0);
-        GLES20.glUniformMatrix4fv(ModelViewMatrix, 1, false, MM, 0);
-        GLES20.glUniformMatrix3fv(NormalMatrix, 1, false, Utils.mat4ToMat3(MM), 0);
+        GLES20.glUniformMatrix4fv(modelViewMatrix, 1, false, MM, 0);
+        GLES20.glUniformMatrix3fv(normalMatrix, 1, false, Utils.mat4ToMat3(MM), 0);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36);
     }
