@@ -59,12 +59,24 @@ public class TetrisActivity extends AppCompatActivity {
                     int screenHeight = renderer.getScreenHeight();
                     int interval = (int) ((float) screenWidth / 3f);
                     int floorHeight = (int) (((float) screenWidth * 0.92f / 2f) + ((float) screenHeight / 2f));
-                    if (event.getY() > floorHeight - interval && touchY > floorHeight - interval) {
+                    if (event.getY() > floorHeight - 150 && event.getY() < floorHeight + 150
+                            && touchY > floorHeight - 150 && touchY < floorHeight + 150) {
                         if (touchX > interval && touchX < screenWidth - interval) {
                             if (event.getX() > touchX) {
                                 renderer.getFloor().rotate(true);
                             } else {
                                 renderer.getFloor().rotate(false);
+                            }
+                            return true;
+                        }
+                    } else if (event.getY() > floorHeight + 150 && touchY > floorHeight + 150) {
+
+                        // rotate the block in z axis
+                        if (touchX > interval && touchX < screenWidth - interval) {
+                            if (event.getX() > touchX) {
+                                renderer.getFallingBlock().rotateZ(false);
+                            } else {
+                                renderer.getFallingBlock().rotateZ(true);
                             }
                             return true;
                         }

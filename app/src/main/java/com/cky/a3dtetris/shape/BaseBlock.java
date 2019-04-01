@@ -346,6 +346,52 @@ public class BaseBlock {
         move(Direction.Z, true);
     }
 
+    /**
+     * rotate around Z axis.
+     *
+     * @param isPositive rotate direction
+     */
+    public void rotateZ(boolean isPositive) {
+        boolean[][][] res = new boolean[3][3][3];
+        boolean[][][] temporary = new boolean[3][3][3];
+        // clone
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
+                    temporary[i][j][k] = validSpace[i][j][k];
+                }
+            }
+        }
+
+        float[] oldPosition = new float[4];
+        float[] newPosition = new float[4];
+
+        float[] MM = new float[16];
+        Matrix.setIdentityM(MM, 0);
+        Matrix.rotateM(MM, 0, isPositive ? 90f : -90f, 0, 1, 0);
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
+                    oldPosition[0] = i - 1;
+                    oldPosition[1] = j - 1;
+                    oldPosition[2] = k - 1;
+                    oldPosition[3] = 1;
+                    newPosition[0] = 0;
+                    newPosition[1] = 0;
+                    newPosition[2] = 0;
+                    newPosition[3] = 0;
+                    Matrix.multiplyMV(newPosition, 0, MM, 0, oldPosition, 0);
+                    res[i][j][k] = temporary[Math.round(newPosition[0]) + 1][Math.round(newPosition[1]) + 1][Math.round(newPosition[2]) + 1];
+                }
+            }
+        }
+
+        validSpace = res;
+        move(Direction.X, false);
+        move(Direction.Y, false);
+    }
+
     public void fall() {
         height--;
     }
