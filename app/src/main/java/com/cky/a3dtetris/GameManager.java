@@ -15,7 +15,8 @@ public class GameManager {
     private volatile Floor floor;
     private volatile BaseBlock fallingBlock;
     private int speed = 1000; // falling speed (Unit: mm)
-    private boolean isPause = false;
+    private boolean isPause = true;
+    private int score = 0;
 
     private volatile OnBlockChangeListener onBlockChangeListener;
 
@@ -24,6 +25,12 @@ public class GameManager {
          * when the falling block fix on the floor.
          */
         void onBlockChange();
+    }
+
+    private OnScoreListener onScoreListener;
+
+    public interface OnScoreListener {
+        void onScore(int score);
     }
 
     private GameManager(Handler handler) {
@@ -37,15 +44,12 @@ public class GameManager {
 
     public void start() {
         if (floor == null || onBlockChangeListener == null || fallingBlock == null) {
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    start();
-//                }
-//            }, 500);
             return;
         }
         isPause = false;
+        if (onScoreListener != null) {
+            onScoreListener.onScore(score);
+        }
         fall();
     }
 
@@ -54,11 +58,6 @@ public class GameManager {
         public void run() {
             if (canBlockFall()) {
                 fallingBlock.fall();
-            } else {
-                floor.fixBlock(fallingBlock);
-                if (onBlockChangeListener != null) {
-                    onBlockChangeListener.onBlockChange();
-                }
             }
             fall();
         }
@@ -167,11 +166,78 @@ public class GameManager {
         this.floor = floor;
     }
 
-    public void setFallingBlock(BaseBlock fallingBlock) {
-        this.fallingBlock = fallingBlock;
+    public void setFallingBlock(BaseBlock block) {
+        fallingBlock = block;
+        fallingBlock.setOnBlockFallingListener(new BaseBlock.OnBlockFallingListener() {
+            @Override
+            public void onFallingFinished() {
+                if (!canBlockFall()) {
+                    floor.fixBlock(fallingBlock);
+                    if (onBlockChangeListener != null) {
+                        onBlockChangeListener.onBlockChange();
+                    }
+                    checkScore();
+                }
+            }
+        });
+    }
+
+    /**
+     * If there are 9 blocks (full) in one XY plane, delete the block and get 100 score.
+     */
+    private void checkScore() {
+        BlockType[][][] blockList = floor.getBlockList();
+        for (int height = 0; height < 10; height++) {
+            // z
+            boolean isFull = true;
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
+                    //xy
+                    if (blockList[j][height][k] == null) {
+                        isFull = false;
+                    }
+                }
+            }
+            if (isFull) { // Score
+                deletePlane(blockList, height);
+                score += 100;
+                if (onScoreListener != null) {
+                    onScoreListener.onScore(score);
+                }
+                height --;
+            }
+        }
+    }
+
+    private void deletePlane(BlockType[][][] blockList, int height) {
+        // clone
+        BlockType[][][] temp = new BlockType[3][10][3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 10; j++) {
+                for (int k = 0; k < 3; k++) {
+                    temp[i][j][k] = blockList[i][j][k];
+                }
+            }
+        }
+        // delete
+        for (int j = height; j < 10; j++) {
+            for (int i = 0; i < 3; i++) {
+                for (int k = 0; k < 3; k++) {
+                    if (j + 1 < 10) {
+                        blockList[i][j][k] = temp[i][j + 1][k];
+                    } else if (j == 9) {
+                        blockList[i][j][k] = null;
+                    }
+                }
+            }
+        }
     }
 
     public void setOnBlockChangeListener(OnBlockChangeListener onBlockChangeListener) {
         this.onBlockChangeListener = onBlockChangeListener;
+    }
+
+    public void setOnScoreListener(OnScoreListener onScoreListener) {
+        this.onScoreListener = onScoreListener;
     }
 }

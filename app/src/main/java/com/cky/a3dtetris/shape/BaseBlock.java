@@ -392,8 +392,21 @@ public class BaseBlock {
         move(Direction.Y, false);
     }
 
+    public interface OnBlockFallingListener {
+        void onFallingFinished();
+    }
+
+    private OnBlockFallingListener onBlockFallingListener;
+
+    public void setOnBlockFallingListener(OnBlockFallingListener onBlockFallingListener) {
+        this.onBlockFallingListener = onBlockFallingListener;
+    }
+
     public void fall() {
         height--;
+        if (onBlockFallingListener != null) {
+            onBlockFallingListener.onFallingFinished();
+        }
     }
 
     public void refresh(int vPosition, int aTextureCoordinatesLocation, int vNormalPosition, int uColor) {

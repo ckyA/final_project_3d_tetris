@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.cky.a3dtetris.shape.BaseBlock;
 
@@ -16,6 +17,7 @@ public class TetrisActivity extends AppCompatActivity {
     private GameManager manager;
     private GameRenderer renderer;
     private ImageView pauseButton;
+    private TextView scoreView;
     float touchX;
     float touchY;
 
@@ -25,6 +27,7 @@ public class TetrisActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tetris);
 
         pauseButton = findViewById(R.id.iv_pause);
+        scoreView = findViewById(R.id.tv_score);
 
         GLSurfaceView gameView = findViewById(R.id.GLSurfaceView);
         gameView.setEGLContextClientVersion(2);
@@ -35,6 +38,19 @@ public class TetrisActivity extends AppCompatActivity {
 
         Handler handler = new Handler();
         manager = GameManager.create(handler);
+        manager.setOnScoreListener(new GameManager.OnScoreListener() {
+            @Override
+            public void onScore(final int score) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (scoreView != null) {
+                            scoreView.setText(String.valueOf(score));
+                        }
+                    }
+                });
+            }
+        });
 
         renderer = new GameRenderer(TetrisActivity.this, Utils.getScreenHeight(this), Utils.getScreenWidth(this), manager);
         gameView.setRenderer(renderer);
@@ -135,6 +151,12 @@ public class TetrisActivity extends AppCompatActivity {
                 pauseButton.setImageResource(R.drawable.ic_play);
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopOrStart(null);
     }
 
     @Override
