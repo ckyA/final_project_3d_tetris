@@ -10,12 +10,13 @@ public class BaseBlock {
 
     private final static String TAG = "BaseBlock";
 
-    private int height = 9; // 0 to 9, the game space is 3 x 3 x 10, the blocks locate at 10 firstly.
+    private int height = MAX_HEIGHT - 1; // 0 to 9, the game space is 3 x 3 x 10, the blocks locate at 10 firstly.
     protected float r = 0;
     protected float g = 0;
     protected float b = 0;
 
     public static final float BLOCK_LENGTH = 0.1f;
+    public static final int MAX_HEIGHT = 12;
 
     private BlockType type;
 

@@ -14,8 +14,9 @@ public class GameManager {
     private Handler handler;
     private volatile Floor floor;
     private volatile BaseBlock fallingBlock;
-    private int speed = 1000; // falling speed (Unit: mm)
+    private int speed = 1500; // falling speed (Unit: mm)
     private boolean isPause = true;
+    private boolean isQuickly = false;
     private int score = 0;
 
     private volatile OnBlockChangeListener onBlockChangeListener;
@@ -87,6 +88,16 @@ public class GameManager {
     public void destroy() {
         handler.removeCallbacksAndMessages(null);
         onBlockChangeListener = null;
+    }
+
+    public void fallQuickly() {
+        if (isQuickly) {
+            return;
+        }
+        isQuickly = true;
+        handler.removeCallbacksAndMessages(null);
+        speed = speed / 50;
+        fall();
     }
 
     public BlockType createRandomBlockType() {
@@ -177,6 +188,10 @@ public class GameManager {
                         onBlockChangeListener.onBlockChange();
                     }
                     checkScore();
+                    if (isQuickly) {
+                        speed *= 50;
+                        isQuickly = false;
+                    }
                 }
             }
         });
@@ -187,7 +202,7 @@ public class GameManager {
      */
     private void checkScore() {
         BlockType[][][] blockList = floor.getBlockList();
-        for (int height = 0; height < 10; height++) {
+        for (int height = 0; height < BaseBlock.MAX_HEIGHT; height++) {
             // z
             boolean isFull = true;
             for (int j = 0; j < 3; j++) {
@@ -211,21 +226,21 @@ public class GameManager {
 
     private void deletePlane(BlockType[][][] blockList, int height) {
         // clone
-        BlockType[][][] temp = new BlockType[3][10][3];
+        BlockType[][][] temp = new BlockType[3][BaseBlock.MAX_HEIGHT][3];
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < BaseBlock.MAX_HEIGHT; j++) {
                 for (int k = 0; k < 3; k++) {
                     temp[i][j][k] = blockList[i][j][k];
                 }
             }
         }
         // delete
-        for (int j = height; j < 10; j++) {
+        for (int j = height; j < BaseBlock.MAX_HEIGHT; j++) {
             for (int i = 0; i < 3; i++) {
                 for (int k = 0; k < 3; k++) {
-                    if (j + 1 < 10) {
+                    if (j + 1 < BaseBlock.MAX_HEIGHT) {
                         blockList[i][j][k] = temp[i][j + 1][k];
-                    } else if (j == 9) {
+                    } else if (j == BaseBlock.MAX_HEIGHT - 1) {
                         blockList[i][j][k] = null;
                     }
                 }

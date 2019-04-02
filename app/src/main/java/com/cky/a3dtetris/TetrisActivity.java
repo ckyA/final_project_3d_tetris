@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -70,11 +71,20 @@ public class TetrisActivity extends AppCompatActivity {
                         return true;
                     }
 
-                    // check floor
                     int screenWidth = renderer.getScreenWidth();
                     int screenHeight = renderer.getScreenHeight();
                     int interval = (int) ((float) screenWidth / 3f);
                     int floorHeight = (int) (((float) screenWidth * 0.92f / 2f) + ((float) screenHeight / 2f));
+
+                    // check fallQuickly()
+                    if (touchY > floorHeight - 150 && touchX > interval && touchX < screenWidth - interval) {
+                        if (Math.abs(touchX - event.getX()) < 50 && event.getY() > touchY) {
+                            manager.fallQuickly();
+                            return true;
+                        }
+                    }
+
+                    // check floor
                     if (event.getY() > floorHeight - 150 && event.getY() < floorHeight + 150
                             && touchY > floorHeight - 150 && touchY < floorHeight + 150) {
                         if (touchX > interval && touchX < screenWidth - interval) {

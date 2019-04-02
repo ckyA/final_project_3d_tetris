@@ -14,7 +14,7 @@ public class Floor {
     private int uMatrixLocation;
     private float[] projectionMatrix;
 
-    private BlockType[][][] blockList = new BlockType[3][10][3]; // If null, don`t draw.
+    private BlockType[][][] blockList = new BlockType[3][BaseBlock.MAX_HEIGHT][3]; // If null, don`t draw.
 
     private float rotationAngle = 0;
     private float degreeNeedRotation = 0; // used to implement an animation
@@ -109,11 +109,11 @@ public class Floor {
     }
 
     public void rotateBlockListAroundZ(boolean positive) {
-        BlockType[][][] res = new BlockType[3][10][3];
-        BlockType[][][] temporary = new BlockType[3][10][3];
+        BlockType[][][] res = new BlockType[3][BaseBlock.MAX_HEIGHT][3];
+        BlockType[][][] temporary = new BlockType[3][BaseBlock.MAX_HEIGHT][3];
         // clone
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < BaseBlock.MAX_HEIGHT; j++) {
                 for (int k = 0; k < 3; k++) {
                     temporary[i][j][k] = blockList[i][j][k];
                 }
@@ -128,7 +128,7 @@ public class Floor {
         float[] newPosition = new float[4];
 
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < BaseBlock.MAX_HEIGHT; j++) {
                 for (int k = 0; k < 3; k++) {
                     oldPosition[0] = i - 1;
                     oldPosition[1] = j;
@@ -179,7 +179,7 @@ public class Floor {
         int blockCount = 0;
 
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < BaseBlock.MAX_HEIGHT; j++) {
                 for (int k = 0; k < 3; k++) {
                     if (blockList[i][j][k] == type) {
                         blockCount++;
