@@ -410,7 +410,7 @@ public class BaseBlock {
         }
     }
 
-    public void refresh(int vPosition, int aTextureCoordinatesLocation, int vNormalPosition, int uColor) {
+    public void draw(int vPosition, int aTextureCoordinatesLocation, int vNormalPosition, int uColor, int texture, int uTextureUnitLocation) {
 
         float[] blockPosition = new float[0];
         float[] texturePosition = new float[0];
@@ -450,9 +450,13 @@ public class BaseBlock {
         GLES20.glEnableVertexAttribArray(vPosition);
 
         GLES20.glUniform4f(uColor, r, g, b, 1.0f);
-    }
 
-    public void draw() {
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
+        GLES20.glUniform1i(uTextureUnitLocation, 0);
+
+        // draw
+
         float[] MVPM = new float[16];
         float[] MM = new float[16];
 

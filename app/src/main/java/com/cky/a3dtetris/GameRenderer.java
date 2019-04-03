@@ -11,6 +11,7 @@ import android.opengl.Matrix;
 import com.cky.a3dtetris.shape.BaseBlock;
 import com.cky.a3dtetris.shape.BlockFactory;
 import com.cky.a3dtetris.shape.Floor;
+import com.cky.a3dtetris.shape.Shadow;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -113,6 +114,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         fallingBlock = BlockFactory.createBlock(manager.createRandomBlockType(), normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
         floor = new Floor(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
+        shadow = new Shadow(normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
 
         manager.setFloor(floor);
         manager.setFallingBlock(fallingBlock);
@@ -128,6 +130,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
     private BaseBlock fallingBlock;
     private Floor floor;
+    private Shadow shadow;
 
     public BaseBlock getFallingBlock() { // todo used to test
         return fallingBlock;
@@ -154,20 +157,13 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
-        fallingBlock.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, blockTexture);
-        GLES20.glUniform1i(uTextureUnitLocation, 0);
-        fallingBlock.draw();
+        fallingBlock.draw(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor, blockTexture, uTextureUnitLocation);
 
         floor.drawFixedBlocks(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
 
-        floor.refresh(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor);
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, floorTexture);
-        GLES20.glUniform1i(uTextureUnitLocation, 1);
-        floor.draw();
+        shadow.showShadow(fallingBlock.getValidSpace(), floor.getBlockList(), vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor, floor.getRotationAngle());
 
+        floor.draw(vPosition, aTextureCoordinatesLocation, vNormalPosition, uColor, floorTexture, uTextureUnitLocation);
     }
 
     @Deprecated

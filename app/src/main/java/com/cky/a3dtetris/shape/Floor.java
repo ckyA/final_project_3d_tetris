@@ -28,31 +28,32 @@ public class Floor {
         this.projectionMatrix = projectionMatrix;
     }
 
-    public void refresh(int vPosition, int aTextureCoordinatesLocation, int vNormalPosition, int uColor) {
-
+    /**
+     * Draw the floor. Call this method after calling Floor.drawFixedBlocks()
+     */
+    public void draw(int vPosition, int aTextureCoordinatesLocation, int vNormalPosition, int uColor, int texture, int uTextureUnitLocation) {
         // set normal line
         GLES20.glVertexAttribPointer(vNormalPosition, 3, GLES20.GL_FLOAT, false, 0,
                 Utils.getFBVertices(normalPosition));
         GLES20.glEnableVertexAttribArray(vNormalPosition);
-
         //texture
         GLES20.glVertexAttribPointer(aTextureCoordinatesLocation, 2, GLES20.GL_FLOAT, false, 0,
                 Utils.getFBVertices(texturePosition));
         GLES20.glEnableVertexAttribArray(aTextureCoordinatesLocation);
-
         // set shapes` location
-
         GLES20.glVertexAttribPointer(vPosition, 3, GLES20.GL_FLOAT, false, 0,
                 Utils.getFBVertices(getFloorPosition(BLOCK_LENGTH)));
         GLES20.glEnableVertexAttribArray(vPosition);
 
         GLES20.glUniform4f(uColor, 1f, 1f, 1f, 0f);
-    }
 
-    /**
-     * Draw the floor. Call this method after calling Floor.drawFixedBlocks()
-     */
-    public void draw() {
+        // set current texture
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
+        GLES20.glUniform1i(uTextureUnitLocation, 1);
+
+        //draw
+
         float[] MVPM = new float[16];
         float[] MM = new float[16];
 
@@ -246,6 +247,10 @@ public class Floor {
         GLES20.glUniformMatrix3fv(normalMatrix, 1, false, Utils.mat4ToMat3(MM), 0);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36 * blockCount);
+    }
+
+    public float getRotationAngle() {
+        return rotationAngle;
     }
 
     /**

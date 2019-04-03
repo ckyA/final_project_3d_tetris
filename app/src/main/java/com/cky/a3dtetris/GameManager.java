@@ -76,6 +76,7 @@ public class GameManager {
      */
     public void pause() {
         isPause = true;
+        handler.removeCallbacksAndMessages(null);
     }
 
     public boolean isPause() {
@@ -219,7 +220,7 @@ public class GameManager {
                 if (onScoreListener != null) {
                     onScoreListener.onScore(score);
                 }
-                height --;
+                height--;
             }
         }
     }
