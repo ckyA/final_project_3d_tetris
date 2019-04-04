@@ -18,7 +18,10 @@ public class GameManager {
     private Handler handler;
     private volatile Floor floor;
     private volatile BaseBlock fallingBlock;
+
     private int speed = 1500; // falling speed (Unit: mm)
+    private static final int MIN_SPEED = 800;
+
     private boolean isPause = true;
     private boolean isQuickly = false;
     private int score = 0;
@@ -332,11 +335,19 @@ public class GameManager {
             if (isFull) { // Score
                 deletePlane(blockList, height);
                 score += 100;
+                checkLevel();
                 if (onScoreListener != null) {
                     onScoreListener.onScore(score);
                 }
                 height--;
             }
+        }
+    }
+
+    private void checkLevel() {
+        speed -= score / 5;
+        if (speed <= MIN_SPEED) {
+            speed = MIN_SPEED;
         }
     }
 
