@@ -32,13 +32,13 @@ public class BlockFactory {
                 GLES20.glUniform4f(uColor, (4f * 16f + 4f) / 255f, (14f * 16f + 15f) / 255f, (14f * 16f + 9f) / 255f, 1.0f);
                 return;
             case C:
-                GLES20.glUniform4f(uColor, 0, 1, 0, 1.0f);
+                GLES20.glUniform4f(uColor, 0.1f, 0.7f, 0, 1.0f);
                 return;
             case D:
                 GLES20.glUniform4f(uColor, 1, 1, 0, 1.0f);
                 return;
             case E:
-                GLES20.glUniform4f(uColor, 1, (68F) / 255f, (96F) / 255f, 1.0f);
+                GLES20.glUniform4f(uColor, 0.9f, 0.3f, 0.3f, 1.0f);
                 return;
             case F:
                 GLES20.glUniform4f(uColor, 1, 185f / 255f, 73f / 255f, 1.0f);
@@ -55,9 +55,9 @@ public class BlockFactory {
             r = 1;
             g = 0;
             b = 0;
-            validSpace[1][0][1] = true;
+            validSpace[1][1][0] = true;
             validSpace[1][1][1] = true;
-            validSpace[1][2][1] = true;
+            validSpace[1][1][2] = true;
         }
     }
 
@@ -80,8 +80,8 @@ public class BlockFactory {
 
         BlockC(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
             super(BlockType.C, normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
-            r = 0;
-            g = (255f) / 255f;
+            r = 0.1f;
+            g = 0.7f;
             b = 0;
             validSpace[1][2][0] = true;
             validSpace[1][2][1] = true;
@@ -95,8 +95,8 @@ public class BlockFactory {
 
         BlockD(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
             super(BlockType.D, normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
-            r = (255f) / 255f;
-            g = (255f) / 255f;
+            r = 1;
+            g = 1;
             b = 0;
             validSpace[0][2][0] = true;
             validSpace[0][2][1] = true;
@@ -110,13 +110,13 @@ public class BlockFactory {
 
         BlockE(int normalMatrix, int modelViewMatrix, int uMatrixLocation, float[] projectionMatrix) {
             super(BlockType.E, normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
-            r = (255F) / 255f;
-            g = (68F) / 255f;
-            b = (96F) / 255f;
+            r = 0.9f;
+            g = 0.3f;
+            b = 0.3f;
             validSpace[0][1][1] = true;
             validSpace[1][1][1] = true;
-            validSpace[1][1][0] = true;
-            validSpace[1][2][0] = true;
+            validSpace[0][2][1] = true;
+            validSpace[1][2][1] = true;
         }
 
     }
@@ -128,9 +128,8 @@ public class BlockFactory {
             r = 1;
             g = 185f / 255f;
             b = 73f / 255f;
-            validSpace[0][1][1] = true;
-            validSpace[0][1][0] = true;
-            validSpace[1][1][0] = true;
+            validSpace[0][2][1] = true;
+            validSpace[0][2][0] = true;
             validSpace[1][2][0] = true;
         }
 
