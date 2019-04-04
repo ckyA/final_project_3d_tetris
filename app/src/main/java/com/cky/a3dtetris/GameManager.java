@@ -1,5 +1,8 @@
 package com.cky.a3dtetris;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
@@ -11,6 +14,7 @@ import java.util.Random;
 
 public class GameManager {
 
+    private final TetrisActivity activity;
     private Handler handler;
     private volatile Floor floor;
     private volatile BaseBlock fallingBlock;
@@ -36,12 +40,13 @@ public class GameManager {
         void onScore(int score);
     }
 
-    private GameManager(Handler handler) {
+    private GameManager(Handler handler, TetrisActivity activity) {
         this.handler = handler;
+        this.activity = activity;
     }
 
-    public static GameManager create(@NonNull Handler handler) {
-        gameManager = new GameManager(handler);
+    public static GameManager create(@NonNull Handler handler, TetrisActivity activity) {
+        gameManager = new GameManager(handler, activity);
         return gameManager;
     }
 
@@ -65,6 +70,16 @@ public class GameManager {
         public void run() {
             if (canBlockFall()) {
                 fallingBlock.fall();
+            } else {
+                floor.fixBlock(fallingBlock);
+                if (onBlockChangeListener != null) {
+                    onBlockChangeListener.onBlockChange();
+                }
+                checkScore();
+                if (isQuickly) {
+                    speed *= 50;
+                    isQuickly = false;
+                }
             }
             fall();
         }
@@ -83,6 +98,80 @@ public class GameManager {
     public void pause() {
         isPause = true;
         handler.removeCallbacksAndMessages(null);
+    }
+
+    private void gameOver() {
+        pause();
+        showGameOverDialog();
+    }
+
+    private void showGameOverDialog() {
+        if (activity == null) {
+            return;
+        }
+        new AlertDialog.Builder(activity)
+                .setMessage(R.string.game_over_message)
+                .setTitle(R.string.game_over)
+                .setCancelable(false)
+                .setNegativeButton(R.string.restart, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        restart();
+                    }
+                })
+                .setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (activity != null) {
+                            activity.finish();
+                        }
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    public void showPauseDialog() {
+        if (activity == null) {
+            return;
+        }
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.pause)
+                .setCancelable(false)
+                .setNeutralButton(R.string.continue_, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        start();
+                    }
+                })
+                .setNegativeButton(R.string.restart, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        restart();
+                    }
+                })
+                .setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    private void restart() {
+        handler.removeCallbacksAndMessages(null);
+        floor.restart();
+        if (onBlockChangeListener != null) {
+            onBlockChangeListener.onBlockChange();
+        }
+        // todo rank list
+        score = 0;
+        if (onScoreListener != null) {
+            onScoreListener.onScore(score);
+        }
+        start();
     }
 
     public boolean isPause() {
@@ -199,6 +288,12 @@ public class GameManager {
     }
 
     public void setFallingBlock(BaseBlock block) {
+
+        if (GameManager.getGameManager() != null && block != null &&
+                !GameManager.getGameManager().detectCollision(block.getHeight(), block.getValidSpace(), GameManager.getGameManager().getFloor().getBlockList())) {
+            gameOver();
+        }
+
         fallingBlock = block;
         fallingBlock.setOnBlockFallingListener(new BaseBlock.OnBlockFallingListener() {
             @Override

@@ -30,7 +30,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:padding="30dp"
-        android:onClick="stopOrStart"
+        android:onClick="pause"
         android:src="@drawable/ic_pause" />
 
 </RelativeLayout>

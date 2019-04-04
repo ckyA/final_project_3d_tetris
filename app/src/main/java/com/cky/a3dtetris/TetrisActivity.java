@@ -38,7 +38,7 @@ public class TetrisActivity extends AppCompatActivity {
         gameView.setZOrderOnTop(true);
 
         Handler handler = new Handler();
-        manager = GameManager.create(handler);
+        manager = GameManager.create(handler, this);
         manager.setOnScoreListener(new GameManager.OnScoreListener() {
             @Override
             public void onScore(final int score) {
@@ -61,6 +61,11 @@ public class TetrisActivity extends AppCompatActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+                if (GameManager.getGameManager() != null && GameManager.getGameManager().isPause()) {
+                    return false;
+                }
+
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     touchX = event.getX();
                     touchY = event.getY();
@@ -149,24 +154,15 @@ public class TetrisActivity extends AppCompatActivity {
         gameView.setOnTouchListener(listener);
     }
 
-    public void stopOrStart(View view) {
-        if (manager.isPause()) {
-            manager.start();
-            if (pauseButton != null) {
-                pauseButton.setImageResource(R.drawable.ic_pause);
-            }
-        } else {
-            manager.pause();
-            if (pauseButton != null) {
-                pauseButton.setImageResource(R.drawable.ic_play);
-            }
-        }
+    public void pause(View view) {
+        manager.pause();
+        manager.showPauseDialog();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        stopOrStart(null);
+        pause(null);
     }
 
     @Override

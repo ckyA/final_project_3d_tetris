@@ -7,6 +7,7 @@ import com.cky.a3dtetris.GameManager;
 import com.cky.a3dtetris.Utils;
 
 import static com.cky.a3dtetris.shape.BaseBlock.BLOCK_LENGTH;
+import static com.cky.a3dtetris.shape.BaseBlock.MAX_HEIGHT;
 
 public class Floor {
 
@@ -177,7 +178,7 @@ public class Floor {
 
     public void fixBlock(BaseBlock block) {
         int blockHeight = block.getHeight();
-        if (blockHeight <= 9 && blockHeight >= 0) {
+        if (blockHeight < MAX_HEIGHT && blockHeight >= 0) {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     for (int k = 0; k < 3; k++) {
@@ -327,6 +328,13 @@ public class Floor {
                 -length, -height, length,
                 -length, -height, -length
         };
+    }
+
+
+    public void restart() {
+        blockList = new BlockType[3][BaseBlock.MAX_HEIGHT][3];
+        rotationAngle = 0;
+        degreeNeedRotation = 0;
     }
 
     // only the top has the texture
