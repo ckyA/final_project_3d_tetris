@@ -3,6 +3,7 @@ package com.cky.a3dtetris.shape;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
+import com.cky.a3dtetris.GameManager;
 import com.cky.a3dtetris.Utils;
 
 import static com.cky.a3dtetris.shape.BaseBlock.BLOCK_LENGTH;
@@ -89,27 +90,47 @@ public class Floor {
         }
     }
 
+    private BlockType[][][] temporaryList = null;
+
     public void checkRotationAnimation() {
         if (degreeNeedRotation != 0) {
+
+            if (temporaryList == null) {
+                temporaryList = rotateBlockListAroundZ(degreeNeedRotation > 0);
+                if (GameManager.getGameManager() != null && !GameManager.getGameManager().detectCollision(GameManager.getGameManager().getFallingBlock().getHeight(),
+                        GameManager.getGameManager().getFallingBlock().getValidSpace(), temporaryList)) {
+                    // cancel rotation
+                    degreeNeedRotation = 0;
+                    temporaryList = null;
+                    blockRotationAngle = 0;
+                }
+            }
+
             if (degreeNeedRotation > 0) {
                 rotationAngle += 10f;
                 degreeNeedRotation -= 10f;
                 blockRotationAngle += 10f;
                 if (degreeNeedRotation == 0) {
-                    rotateBlockListAroundZ(true);
+                    //rotateBlockListAroundZ(true);
+                    blockRotationAngle = 0;
+                    blockList = temporaryList;
+                    temporaryList = null;
                 }
             } else {
                 rotationAngle -= 10f;
                 degreeNeedRotation += 10f;
                 blockRotationAngle -= 10f;
                 if (degreeNeedRotation == 0) {
-                    rotateBlockListAroundZ(false);
+                    //rotateBlockListAroundZ(false);
+                    blockRotationAngle = 0;
+                    blockList = temporaryList;
+                    temporaryList = null;
                 }
             }
         }
     }
 
-    public void rotateBlockListAroundZ(boolean positive) {
+    public BlockType[][][] rotateBlockListAroundZ(boolean positive) {
         BlockType[][][] res = new BlockType[3][BaseBlock.MAX_HEIGHT][3];
         BlockType[][][] temporary = new BlockType[3][BaseBlock.MAX_HEIGHT][3];
         // clone
@@ -144,8 +165,10 @@ public class Floor {
                 }
             }
         }
-        blockRotationAngle = 0;
-        blockList = res;
+//        blockRotationAngle = 0;
+//        blockList = res;
+
+        return res;
     }
 
     public BlockType[][][] getBlockList() {

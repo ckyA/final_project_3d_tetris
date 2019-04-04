@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import com.cky.a3dtetris.GameManager;
 import com.cky.a3dtetris.Utils;
 
 public class BaseBlock {
@@ -58,7 +59,7 @@ public class BaseBlock {
      * @param direction : Direction.X or Direction.Y
      * @param positive  : front or back
      */
-    public void move(Direction direction, boolean positive) {
+    public void move(Direction direction, boolean positive, boolean[][][] validSpace) {
         if (direction == Direction.X) {
             if (positive) {
                 // whether block can be moved
@@ -212,6 +213,10 @@ public class BaseBlock {
         }
     }
 
+    public void move(Direction direction, boolean positive) {
+        move(direction, positive, validSpace);
+    }
+
     /**
      * rotate around x axis.
      *
@@ -275,9 +280,12 @@ public class BaseBlock {
                 }
             }
         }
-        validSpace = res;
-        move(Direction.Z, true);
-        move(Direction.Z, true);
+        move(Direction.Z, true, res);
+        move(Direction.Z, true, res);
+
+        if (GameManager.getGameManager() != null && GameManager.getGameManager().detectCollision(height, res, GameManager.getGameManager().getFloor().getBlockList())) {
+            validSpace = res;
+        }
     }
 
     /**
@@ -342,9 +350,12 @@ public class BaseBlock {
                 }
             }
         }
-        validSpace = res;
-        move(Direction.Z, true);
-        move(Direction.Z, true);
+        move(Direction.Z, true, res);
+        move(Direction.Z, true, res);
+
+        if (GameManager.getGameManager() != null && GameManager.getGameManager().detectCollision(height, res, GameManager.getGameManager().getFloor().getBlockList())) {
+            validSpace = res;
+        }
     }
 
     /**
@@ -387,10 +398,12 @@ public class BaseBlock {
                 }
             }
         }
+        move(Direction.X, false, res);
+        move(Direction.Y, false, res);
 
-        validSpace = res;
-        move(Direction.X, false);
-        move(Direction.Y, false);
+        if (GameManager.getGameManager() != null && GameManager.getGameManager().detectCollision(height, res, GameManager.getGameManager().getFloor().getBlockList())) {
+            validSpace = res;
+        }
     }
 
     public interface OnBlockFallingListener {

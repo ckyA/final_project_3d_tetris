@@ -19,6 +19,8 @@ public class GameManager {
     private boolean isQuickly = false;
     private int score = 0;
 
+    private static GameManager gameManager;
+
     private volatile OnBlockChangeListener onBlockChangeListener;
 
     public interface OnBlockChangeListener {
@@ -36,11 +38,15 @@ public class GameManager {
 
     private GameManager(Handler handler) {
         this.handler = handler;
-
     }
 
     public static GameManager create(@NonNull Handler handler) {
-        return new GameManager(handler);
+        gameManager = new GameManager(handler);
+        return gameManager;
+    }
+
+    public static GameManager getGameManager() {
+        return gameManager;
     }
 
     public void start() {
@@ -89,6 +95,7 @@ public class GameManager {
     public void destroy() {
         handler.removeCallbacksAndMessages(null);
         onBlockChangeListener = null;
+        gameManager = null;
     }
 
     public void fallQuickly() {
@@ -174,6 +181,19 @@ public class GameManager {
         return true;
     }
 
+    public boolean detectCollision(int height, boolean[][][] validSpace, BlockType[][][] blockList) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
+                    if (height - 2 + j >= 0 && validSpace[i][j][k] && blockList[i][height - 2 + j][k] != null) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     public void setFloor(Floor floor) {
         this.floor = floor;
     }
@@ -247,6 +267,14 @@ public class GameManager {
                 }
             }
         }
+    }
+
+    public Floor getFloor() {
+        return floor;
+    }
+
+    public BaseBlock getFallingBlock() {
+        return fallingBlock;
     }
 
     public void setOnBlockChangeListener(OnBlockChangeListener onBlockChangeListener) {
