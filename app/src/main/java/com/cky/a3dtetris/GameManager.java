@@ -23,7 +23,7 @@ public class GameManager {
     private static final int MIN_SPEED = 800;
 
     private boolean isPause = true;
-    private boolean isQuickly = false;
+    private volatile boolean isQuickly = false;
     private int score = 0;
 
     private static GameManager gameManager;
@@ -75,13 +75,14 @@ public class GameManager {
                 fallingBlock.fall();
             } else {
                 floor.fixBlock(fallingBlock);
-                if (onBlockChangeListener != null) {
-                    onBlockChangeListener.onBlockChange();
-                }
                 checkScore();
                 if (isQuickly) {
                     speed *= 50;
                     isQuickly = false;
+                }
+
+                if (onBlockChangeListener != null) {
+                    onBlockChangeListener.onBlockChange();
                 }
             }
             fall();
@@ -298,22 +299,23 @@ public class GameManager {
         }
 
         fallingBlock = block;
-        fallingBlock.setOnBlockFallingListener(new BaseBlock.OnBlockFallingListener() {
-            @Override
-            public void onFallingFinished() {
-                if (!canBlockFall()) {
-                    floor.fixBlock(fallingBlock);
-                    if (onBlockChangeListener != null) {
-                        onBlockChangeListener.onBlockChange();
-                    }
-                    checkScore();
-                    if (isQuickly) {
-                        speed *= 50;
-                        isQuickly = false;
-                    }
-                }
-            }
-        });
+//        fallingBlock.setOnBlockFallingListener(new BaseBlock.OnBlockFallingListener() {
+//            @Override
+//            public void onFallingFinished() {
+//                if (!canBlockFall()) {
+//                    floor.fixBlock(fallingBlock);
+//                    checkScore();
+//                    if (isQuickly) {
+//                        speed *= 50;
+//                        isQuickly = false;
+//                    }
+//
+//                    if (onBlockChangeListener != null) {
+//                        onBlockChangeListener.onBlockChange();
+//                    }
+//                }
+//            }
+//        });
     }
 
     /**
