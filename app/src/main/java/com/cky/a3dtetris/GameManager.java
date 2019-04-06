@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.cky.a3dtetris.shape.BaseBlock;
 import com.cky.a3dtetris.shape.BlockType;
@@ -19,8 +20,9 @@ public class GameManager {
     private volatile Floor floor;
     private volatile BaseBlock fallingBlock;
 
-    private int speed = 1500; // falling speed (Unit: mm)
+    private int speed = MAX_SPEED; // falling speed (Unit: mm)
     private static final int MIN_SPEED = 800;
+    private static final int MAX_SPEED = 1500;
 
     private boolean isPause = true;
     private volatile boolean isQuickly = false;
@@ -71,18 +73,20 @@ public class GameManager {
     private Runnable fallRunnable = new Runnable() {
         @Override
         public void run() {
-            if (canBlockFall()) {
-                fallingBlock.fall();
-            } else {
-                floor.fixBlock(fallingBlock);
-                checkScore();
-                if (isQuickly) {
-                    speed *= 50;
-                    isQuickly = false;
-                }
+            if (!floor.isRotating()) {
+                if (canBlockFall()) {
+                    fallingBlock.fall();
+                } else {
+                    floor.fixBlock(fallingBlock);
+                    checkScore();
+                    if (isQuickly) {
+                        speed *= 50;
+                        isQuickly = false;
+                    }
 
-                if (onBlockChangeListener != null) {
-                    onBlockChangeListener.onBlockChange();
+                    if (onBlockChangeListener != null) {
+                        onBlockChangeListener.onBlockChange();
+                    }
                 }
             }
             fall();
@@ -299,23 +303,23 @@ public class GameManager {
         }
 
         fallingBlock = block;
-//        fallingBlock.setOnBlockFallingListener(new BaseBlock.OnBlockFallingListener() {
-//            @Override
-//            public void onFallingFinished() {
-//                if (!canBlockFall()) {
-//                    floor.fixBlock(fallingBlock);
-//                    checkScore();
-//                    if (isQuickly) {
-//                        speed *= 50;
-//                        isQuickly = false;
-//                    }
-//
-//                    if (onBlockChangeListener != null) {
-//                        onBlockChangeListener.onBlockChange();
-//                    }
-//                }
-//            }
-//        });
+        fallingBlock.setOnBlockFallingListener(new BaseBlock.OnBlockFallingListener() {
+            @Override
+            public void onFallingFinished() {
+                if (!canBlockFall()) {
+                    floor.fixBlock(fallingBlock);
+                    checkScore();
+                    if (isQuickly) {
+                        speed *= 50;
+                        isQuickly = false;
+                    }
+
+                    if (onBlockChangeListener != null) {
+                        onBlockChangeListener.onBlockChange();
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -337,7 +341,6 @@ public class GameManager {
             if (isFull) { // Score
                 deletePlane(blockList, height);
                 score += 100;
-                checkLevel();
                 if (onScoreListener != null) {
                     onScoreListener.onScore(score);
                 }
@@ -346,10 +349,16 @@ public class GameManager {
         }
     }
 
-    private void checkLevel() {
-        speed -= score / 5;
-        if (speed <= MIN_SPEED) {
-            speed = MIN_SPEED;
+    public void checkLevel() {
+        speed = MAX_SPEED;
+        int score = this.score;
+        while (score >= 500) {
+            speed -= 100;
+            score -= 500;
+            if (speed <= MIN_SPEED) {
+                speed = MIN_SPEED;
+                return;
+            }
         }
     }
 

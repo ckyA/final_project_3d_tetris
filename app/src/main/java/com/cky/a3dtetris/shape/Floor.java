@@ -93,6 +93,10 @@ public class Floor {
 
     private BlockType[][][] temporaryList = null;
 
+    public boolean isRotating() {
+        return degreeNeedRotation != 0;
+    }
+
     public void checkRotationAnimation() {
         if (degreeNeedRotation != 0) {
 
@@ -104,6 +108,7 @@ public class Floor {
                     degreeNeedRotation = 0;
                     temporaryList = null;
                     blockRotationAngle = 0;
+                    return;
                 }
             }
 

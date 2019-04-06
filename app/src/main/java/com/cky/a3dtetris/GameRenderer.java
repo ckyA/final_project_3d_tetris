@@ -123,6 +123,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             public void onBlockChange() {
                 fallingBlock = BlockFactory.createBlock(manager.createRandomBlockType(), normalMatrix, modelViewMatrix, uMatrixLocation, projectionMatrix);
                 manager.setFallingBlock(fallingBlock);
+                manager.checkLevel();
             }
         });
         manager.start();
