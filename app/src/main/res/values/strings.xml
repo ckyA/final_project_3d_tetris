@@ -10,4 +10,7 @@
     <string name="game_over_message">You can restart or exit the game</string>
     <string name="pause">Pause</string>
     <string name="continue_">Continue</string>
+    <string name="save">save</string>
+    <string name="input_your_name_and_save_the_score">Input your name.</string>
+    <string name="save_successful">Save successful</string>
 </resources>

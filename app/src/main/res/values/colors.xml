@@ -5,4 +5,5 @@
     <color name="colorAccent">#03ae7b</color>
     <color name="grade">#5c5a7a</color>
     <color name="ss">#5c5a7a</color>
+    <color name="dialog_background">#f6f3d8</color>
 </resources>

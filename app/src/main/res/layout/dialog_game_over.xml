@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dialog_background">
+
+    <TextView
+        android:id="@+id/tv_game_over"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="casual"
+        android:gravity="center"
+        android:text="@string/game_over"
+        android:textColor="@color/colorAccent"
+        android:textSize="27sp" />
+
+    <LinearLayout
+        android:id="@+id/ll_rank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_game_over"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <EditText
+            android:id="@+id/edit_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/input_your_name_and_save_the_score" />
+
+        <TextView
+            android:id="@+id/tv_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="casual"
+            android:padding="5dp"
+            android:text="@string/save"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_restart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_rank"
+        android:layout_marginEnd="20dp"
+        android:layout_toStartOf="@id/tv_exit"
+        android:fontFamily="casual"
+        android:padding="5dp"
+        android:text="@string/restart"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/ll_rank"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="casual"
+        android:padding="5dp"
+        android:text="@string/exit"
+        android:textColor="@color/colorAccent"
+        android:layout_marginBottom="20dp"
+        android:textSize="20sp" />
+</RelativeLayout>

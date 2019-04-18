@@ -17,7 +17,6 @@ public class TetrisActivity extends AppCompatActivity {
 
     private GameManager manager;
     private GameRenderer renderer;
-    private ImageView pauseButton;
     private TextView scoreView;
     float touchX;
     float touchY;
@@ -27,7 +26,6 @@ public class TetrisActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tetris);
 
-        pauseButton = findViewById(R.id.iv_pause);
         scoreView = findViewById(R.id.tv_score);
 
         GLSurfaceView gameView = findViewById(R.id.GLSurfaceView);

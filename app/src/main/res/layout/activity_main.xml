@@ -43,8 +43,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="80dp"
         android:gravity="center"
-        android:onClick="settings"
-        android:text="@string/settings"
         android:textColor="#eeeedb"
         android:textSize="16sp" />
 

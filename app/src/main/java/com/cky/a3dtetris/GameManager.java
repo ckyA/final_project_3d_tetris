@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 
 import com.cky.a3dtetris.shape.BaseBlock;
 import com.cky.a3dtetris.shape.BlockType;
@@ -117,26 +119,64 @@ public class GameManager {
         if (activity == null) {
             return;
         }
-        new AlertDialog.Builder(activity)
-                .setMessage(R.string.game_over_message)
-                .setTitle(R.string.game_over)
+        View view = activity.getLayoutInflater().inflate(R.layout.dialog_game_over, null);
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(activity)
                 .setCancelable(false)
-                .setNegativeButton(R.string.restart, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        restart();
-                    }
-                })
-                .setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (activity != null) {
-                            activity.finish();
-                        }
-                    }
-                })
-                .create()
-                .show();
+                .setView(view)
+                .create();
+
+        final EditText editText = view.findViewById(R.id.edit_name);
+        view.findViewById(R.id.tv_save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = editText.getText().toString();
+                editText.setText(null);
+                editText.setHint(R.string.save_successful);
+                editText.setEnabled(false);
+                v.setClickable(false);
+            }
+        });
+
+        view.findViewById(R.id.tv_restart).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                restart();
+                alertDialog.dismiss();
+            }
+        });
+
+        view.findViewById(R.id.tv_exit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                activity.finish();
+            }
+        });
+
+
+        alertDialog.show();
+
+//        new AlertDialog.Builder(activity)
+//                .setMessage(R.string.game_over_message)
+//                .setTitle(R.string.game_over)
+//                .setCancelable(false)
+//                .setNegativeButton(R.string.restart, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        restart();
+//                    }
+//                })
+//                .setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        if (activity != null) {
+//                            activity.finish();
+//                        }
+//                    }
+//                })
+//                .create()
+//                .show();
     }
 
     public void showPauseDialog() {
