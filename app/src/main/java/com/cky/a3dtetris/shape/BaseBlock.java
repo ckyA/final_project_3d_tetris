@@ -214,7 +214,21 @@ public class BaseBlock {
     }
 
     public void move(Direction direction, boolean positive) {
-        move(direction, positive, validSpace);
+        boolean[][][] temporary = new boolean[3][3][3];
+        // clone
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
+                    temporary[i][j][k] = validSpace[i][j][k];
+                }
+            }
+        }
+
+        move(direction, positive, temporary);
+
+        if (GameManager.getGameManager() != null && GameManager.getGameManager().detectCollision(height, temporary, GameManager.getGameManager().getFloor().getBlockList())) {
+            validSpace = temporary;
+        }
     }
 
     /**
