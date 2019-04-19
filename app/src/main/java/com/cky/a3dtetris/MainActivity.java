@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.cky.a3dtetris.rank.RankListActivity;
 import com.cky.a3dtetris.rank.RankManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void rank(View view) {
-        // todo
+        startActivity(new Intent(this, RankListActivity.class));
     }
 
     public void settings(View view) {

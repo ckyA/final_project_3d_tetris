@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/enter_background">
+
+    <TextView
+        android:id="@+id/title_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:fontFamily="casual"
+        android:gravity="center"
+        android:text="@string/rank_list"
+        android:textColor="@color/grade"
+        android:textSize="27sp" />
+
+    <View
+        android:id="@+id/cut_off_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/title_rl"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:background="@color/grade" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@id/cut_off_1"
+        android:layout_marginStart="90dp"
+        android:fontFamily="casual"
+        android:gravity="center"
+        android:text="@string/name"
+        android:textColor="@color/grade"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/cut_off_1"
+        android:layout_marginEnd="90dp"
+        android:fontFamily="casual"
+        android:gravity="center"
+        android:text="@string/score"
+        android:textColor="@color/grade"
+        android:textSize="16sp" />
+
+    <View
+        android:id="@+id/cut_off_2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/cut_off_1"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="50dp"
+        android:background="@color/grade" />
+
+    <ListView
+        android:id="@+id/lv_rank_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cut_off_2"
+        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:scrollbars="none" />
+</RelativeLayout>

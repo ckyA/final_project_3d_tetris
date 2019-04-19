@@ -13,4 +13,6 @@
     <string name="save">save</string>
     <string name="input_your_name_and_save_the_score">Input your name.</string>
     <string name="save_successful">Save successful</string>
+    <string name="name">Name</string>
+    <string name="score">Score</string>
 </resources>

@@ -26,6 +26,7 @@ public class RankManager {
     }
 
     public static void destroy() {
+        manager.saveList();
         manager = null;
     }
 
@@ -33,7 +34,33 @@ public class RankManager {
         return manager;
     }
 
-    private void savaList() {
+    public ArrayList<RankItem> getRankList() {
+        if (rankList == null) {
+            rankList = new ArrayList<>();
+        }
+        return rankList;
+    }
+
+    public void rank() {
+        if (rankList == null) {
+            rankList = new ArrayList<>();
+        } else {
+            // rank
+            for (int i = 0; i < rankList.size(); i++) {
+                int maxIndex = i;
+                for (int j = i; j < rankList.size(); j++) {
+                    if (rankList.get(j).getScore() > rankList.get(maxIndex).getScore()) {
+                        maxIndex = j;
+                    }
+                }
+                RankItem temp = rankList.get(i);
+                rankList.set(i, rankList.get(maxIndex));
+                rankList.set(maxIndex, temp);
+            }
+        }
+    }
+
+    public void saveList() {
         if (rankList == null) {
             return;
         }

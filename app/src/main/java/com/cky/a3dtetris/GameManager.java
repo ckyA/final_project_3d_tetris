@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.cky.a3dtetris.rank.RankItem;
+import com.cky.a3dtetris.rank.RankManager;
 import com.cky.a3dtetris.shape.BaseBlock;
 import com.cky.a3dtetris.shape.BlockType;
 import com.cky.a3dtetris.shape.Floor;
@@ -131,6 +133,9 @@ public class GameManager {
             @Override
             public void onClick(View v) {
                 String name = editText.getText().toString();
+                RankManager.getManager().getRankList().add(new RankItem(name, score));
+                RankManager.getManager().saveList();
+
                 editText.setText(null);
                 editText.setHint(R.string.save_successful);
                 editText.setEnabled(false);
